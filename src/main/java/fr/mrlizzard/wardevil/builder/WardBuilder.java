@@ -18,5 +18,5 @@ public class WardBuilder extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
     }
-    
+
 }
