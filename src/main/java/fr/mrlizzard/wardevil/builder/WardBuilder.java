@@ -27,7 +27,7 @@ public class WardBuilder extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
 
-        if (!config.containsAllFiles()) {
+        if (!config.loadFiles()) {
             if (config.getMissing() != null)
                 logger.error("Configuration file is missing (" + config.getMissing() + ").");
             return;

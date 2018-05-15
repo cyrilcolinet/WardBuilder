@@ -55,7 +55,7 @@ public class ConfigManager {
         return false;
     }
 
-    public boolean containsAllFiles() {
+    public boolean loadFiles() {
         if (!data.exists()) {
             data.mkdirs();
             missing = "data folder";
