@@ -1,4 +1,4 @@
-package fr.mrlizzard.wardevil.builder.managers.commands;
+package fr.mrlizzard.wardevil.builder.commands;
 
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import org.bukkit.command.Command;
