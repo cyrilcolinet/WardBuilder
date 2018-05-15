@@ -9,14 +9,16 @@ public abstract class ACommand {
     private WardBuilder             instance;
     private String                  subCommand;
 
-    public ACommand(WardBuilder instance, String subCommand) {
+    ACommand(WardBuilder instance, String subCommand) {
         this.instance = instance;
         this.subCommand = subCommand;
+
+        this.instance.getLog().info("Loading sub command \"" + subCommand + "\"...");
     }
 
     public abstract boolean executeCommand(CommandSender sender, Command command, String[] args);
 
-    public String getSubCommand() {
+    String getSubCommand() {
         return subCommand;
     }
 
