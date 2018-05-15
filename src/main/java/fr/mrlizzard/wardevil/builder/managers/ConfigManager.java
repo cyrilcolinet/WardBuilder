@@ -3,6 +3,7 @@ package fr.mrlizzard.wardevil.builder.managers;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
+import fr.mrlizzard.wardevil.builder.objects.config.BlacklistConfig;
 import fr.mrlizzard.wardevil.builder.objects.config.Config;
 
 import java.io.File;
@@ -63,7 +64,7 @@ public class ConfigManager {
     }
 
     private boolean containsBlacklist() {
-        return true;
+        return parseJsonFile("blacklist.json", BlacklistConfig.class);
     }
 
     private boolean containsWhitelist() {
