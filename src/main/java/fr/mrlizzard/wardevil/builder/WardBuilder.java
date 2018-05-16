@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.mrlizzard.wardevil.builder.listeners.ListenersManager;
 import fr.mrlizzard.wardevil.builder.commands.CommandManager;
+import fr.mrlizzard.wardevil.builder.managers.BuildManager;
 import fr.mrlizzard.wardevil.builder.managers.ConfigManager;
 import fr.mrlizzard.wardevil.builder.uitls.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +34,7 @@ public class WardBuilder extends JavaPlugin {
             return;
         }
 
+        new BuildManager(this);
         new ListenersManager(this);
         new CommandManager(this);
     }
@@ -50,4 +52,7 @@ public class WardBuilder extends JavaPlugin {
         return gson;
     }
 
+    public ConfigManager getConfigManager() {
+        return config;
+    }
 }

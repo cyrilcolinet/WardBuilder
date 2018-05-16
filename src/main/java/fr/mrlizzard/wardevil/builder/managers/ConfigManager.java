@@ -77,15 +77,35 @@ public class ConfigManager {
         configs.put("config.json", Config.class);
         configs.put("blacklist.json", BlacklistConfig.class);
         configs.put("whitelist.json", WhitelistConfig.class);
-        configs.put("players.json", Config.class);
-        configs.entrySet().forEach(entry -> loaders.add(parseJsonFile(entry.getKey(), entry.getValue())));
+        configs.put("players.json", PlayersConfig.class);
+        configs.forEach((key, value) -> loaders.add(parseJsonFile(key, value)));
 
-        // TODO: Load files with generic way
+        config = ((Config)loaders.get(0));
+        blacklistConfig = ((BlacklistConfig)loaders.get(1));
+        whitelistConfig = ((WhitelistConfig)loaders.get(2));
+        playersConfig = ((PlayersConfig)loaders.get(3));
+        
         return true;
     }
 
     public String getMissing() {
         return missing;
+    }
+
+    public BlacklistConfig getBlacklistConfig() {
+        return blacklistConfig;
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public PlayersConfig getPlayersConfig() {
+        return playersConfig;
+    }
+
+    public WhitelistConfig getWhitelistConfig() {
+        return whitelistConfig;
     }
 
 }
