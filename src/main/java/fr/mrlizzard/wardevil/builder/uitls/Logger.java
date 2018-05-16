@@ -10,9 +10,7 @@ public class Logger {
 
     public Logger(WardBuilder instance) {
         this.instance = instance;
-        this.prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN;
-        this.prefix += this.instance.getDescription().getName();
-        this.prefix += ChatColor.WHITE + "] " + ChatColor.RESET;
+        this.prefix = "[" + this.instance.getDescription().getName() + "]";
     }
 
     public void info(String msg) {
