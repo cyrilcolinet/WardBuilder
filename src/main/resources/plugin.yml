@@ -1,5 +1,13 @@
 name: WardBuilder
 version: 0.0.1
+load: STARTUP
 author: MrLizzard
 description: Build plugin delivred for Wardevil.
 main: fr.mrlizzard.wardevil.builder.WardBuilder
+database: false
+
+commands:
+  build:
+    usage: "Usage: /build help"
+    aliases: [b, wardbuild]
+    permission: wardbuild.execute
