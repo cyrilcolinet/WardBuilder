@@ -10,7 +10,7 @@ public class Logger {
 
     public Logger(WardBuilder instance) {
         this.instance = instance;
-        this.prefix = "[" + this.instance.getDescription().getName() + "]";
+        this.prefix = "[" + this.instance.getDescription().getName() + "] ";
     }
 
     public void info(String msg) {
