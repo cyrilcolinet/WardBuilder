@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommandManager implements CommandExecutor {
@@ -14,6 +15,7 @@ public class CommandManager implements CommandExecutor {
 
     public CommandManager(WardBuilder instance) {
         this.instance = instance;
+        this.commands = new ArrayList<>();
 
         this.configureCommands();
         this.instance.getCommand("build").setExecutor(this);
