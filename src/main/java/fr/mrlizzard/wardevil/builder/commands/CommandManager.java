@@ -1,6 +1,7 @@
 package fr.mrlizzard.wardevil.builder.commands;
 
 import fr.mrlizzard.wardevil.builder.WardBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,7 +31,10 @@ public class CommandManager implements CommandExecutor {
         sender.sendMessage(" /build help\t\t- Afficher la page d'aide");
 
         commands.entrySet().forEach(entry -> {
-            sender.sendMessage(" /build " + entry.getKey().getSubCommand() + "\t\t- " + entry.getValue());
+            String cmd = ChatColor.YELLOW + " /build " + entry.getKey().getSubCommand();
+            String desc = ChatColor.WHITE + "- " + ChatColor.GOLD + entry.getValue();
+
+            sender.sendMessage(cmd + ChatColor.RESET + "\t\t" + desc + ChatColor.RESET);
         });
     }
 
