@@ -29,7 +29,7 @@ public class WardBuilder extends JavaPlugin {
 
         if (!config.loadFiles()) {
             if (config.getMissing() != null)
-                logger.error("Configuration file is missing (" + config.getMissing() + ").");
+                logger.error("Config's missing (" + config.getMissing() + ").");
             return;
         }
 
