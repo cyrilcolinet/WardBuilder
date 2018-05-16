@@ -30,7 +30,7 @@ public class CommandManager implements CommandExecutor {
         sender.sendMessage(" /build help\t\t- Afficher la page d'aide");
 
         commands.entrySet().forEach(entry -> {
-            sender.sendMessage(" " + entry.getKey().getCommand() + "\t\t" + entry.getValue());
+            sender.sendMessage(" /build " + entry.getKey().getSubCommand() + "\t\t" + entry.getValue());
         });
     }
 

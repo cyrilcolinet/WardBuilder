@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 public abstract class ACommand {
 
     private WardBuilder             instance;
-    private String                  command;
     private String                  subCommand;
 
     ACommand(WardBuilder instance, String subCommand) {
@@ -23,7 +22,4 @@ public abstract class ACommand {
         return subCommand;
     }
 
-    String getCommand() {
-        return command;
-    }
 }
