@@ -27,7 +27,9 @@ public class CommandManager implements CommandExecutor {
     }
 
     private void displayHelp(CommandSender sender) {
-        sender.sendMessage("--[ WardBuilder | Help ]--");
+        sender.sendMessage(ChatColor.RED + "--[ " +
+                ChatColor.GOLD + "WardBuilder | Help " +
+                ChatColor.RED + "]--" + ChatColor.RESET);
         sender.sendMessage(ChatColor.YELLOW + " /build help\t\t" + ChatColor.WHITE +
                 "- " + ChatColor.GOLD + "Afficher la page d'aide" + ChatColor.RESET);
 
