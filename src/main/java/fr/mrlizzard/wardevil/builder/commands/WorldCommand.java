@@ -12,6 +12,6 @@ public class WorldCommand extends ACommand {
 
     @Override
     public boolean executeCommand(CommandSender sender, Command command, String[] args) {
-        return false;
+        return true;
     }
 }
