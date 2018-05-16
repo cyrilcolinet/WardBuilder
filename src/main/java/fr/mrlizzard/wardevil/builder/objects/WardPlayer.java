@@ -9,17 +9,11 @@ public class WardPlayer {
     private static Map<UUID, WardPlayer>    players = new HashMap<UUID, WardPlayer>();
 
     private UUID                            uuid;
-    private String                          name;
 
-    public WardPlayer(UUID uuid, String name) {
+    public WardPlayer(UUID uuid) {
         this.uuid = uuid;
-        this.name = name;
 
         players.put(this.uuid, this);
-    }
-
-    public String getName() {
-        return name;
     }
 
     public UUID getUuid() {
@@ -28,6 +22,18 @@ public class WardPlayer {
 
     public static Map<UUID, WardPlayer> getPlayers() {
         return players;
+    }
+
+    public static WardPlayer getPlayer(UUID uuid) {
+        WardPlayer wardPlayer = null;
+
+        if (players.containsKey(uuid))
+            return players.get(uuid);
+
+        new WardPlayer(uuid);
+        wardPlayer = players.get(uuid);
+
+        return wardPlayer;
     }
 
 }

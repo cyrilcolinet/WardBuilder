@@ -11,29 +11,39 @@ import fr.mrlizzard.wardevil.builder.objects.config.WhitelistConfig;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
 
     private WardBuilder             instance;
     private String                  missing;
     private File                    data;
-    private List<Boolean>           loaders;
+    private Map<String, Type>       configs;
+    private List<Object>            loaders;
+
+    private Config                  config;
+    private BlacklistConfig         blacklistConfig;
+    private WhitelistConfig         whitelistConfig;
+    private PlayersConfig           playersConfig;
 
     public ConfigManager(WardBuilder instance) {
         this.instance = instance;
         this.missing = null;
         this.data = instance.getDataFolder();
-        this.loaders = new ArrayList<Boolean>();
+        this.configs = new HashMap<>();
+        this.loaders = new ArrayList<>();
     }
 
-    private boolean parseJsonFile(String file, Type type) {
+    private Object parseJsonFile(String file, Type type) {
         File config = new File(data, file);
         String content = null;
+        Object result = null;
 
         if (config.exists()) {
             missing = file;
-            return false;
+            return null;
         }
 
         try {
@@ -42,36 +52,35 @@ public class ConfigManager {
                 throw new Exception(file + " content is null.");
 
             try {
-                instance.getGson().fromJson(content, type);
+                result = instance.getGson().fromJson(content, type);
             } catch (Exception err) {
                 throw new Exception(file + " file is not a valid JSON format.");
             }
 
-            return true;
+            return result;
         } catch (Exception except) {
             instance.getLog().error(except.getMessage());
         }
 
-        return false;
+        return null;
     }
 
     public boolean loadFiles() {
+        Integer loop = 0;
+
         if (!data.exists()) {
             data.mkdirs();
             missing = "data folder";
             return false;
         }
 
-        loaders.add(parseJsonFile("config.json", Config.class));
-        loaders.add(parseJsonFile("blacklist.json", BlacklistConfig.class));
-        loaders.add(parseJsonFile("whitelist.json", WhitelistConfig.class));
-        loaders.add(parseJsonFile("players.json", PlayersConfig.class));
+        configs.put("config.json", Config.class);
+        configs.put("blacklist.json", BlacklistConfig.class);
+        configs.put("whitelist.json", WhitelistConfig.class);
+        configs.put("players.json", Config.class);
+        configs.entrySet().forEach(entry -> loaders.add(parseJsonFile(entry.getKey(), entry.getValue())));
 
-        for (Boolean loader : loaders) {
-            if (!loader)
-                return loader;
-        }
-
+        // TODO: Load files with generic way
         return true;
     }
 

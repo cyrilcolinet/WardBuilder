@@ -3,6 +3,7 @@ package fr.mrlizzard.wardevil.builder.listeners;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.listeners.player.PlayerDisconnectListener;
 import fr.mrlizzard.wardevil.builder.listeners.player.PlayerJoinListener;
+import fr.mrlizzard.wardevil.builder.listeners.player.PlayerLoginListener;
 import org.bukkit.plugin.PluginManager;
 
 public class ListenersManager {
@@ -18,6 +19,7 @@ public class ListenersManager {
     }
 
     private void loadListeners() {
+        pluginManager.registerEvents(new PlayerLoginListener(), instance);
         pluginManager.registerEvents(new PlayerJoinListener(), instance);
         pluginManager.registerEvents(new PlayerDisconnectListener(), instance);
     }
