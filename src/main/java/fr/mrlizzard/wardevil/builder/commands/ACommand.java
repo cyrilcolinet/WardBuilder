@@ -16,6 +16,8 @@ public abstract class ACommand {
         this.instance.getLog().info("Loading sub command \"" + subCommand + "\"...");
     }
 
+    public abstract void displayHelp(CommandSender sender);
+
     public abstract boolean executeCommand(CommandSender sender, Command command, String[] args);
 
     String getSubCommand() {
