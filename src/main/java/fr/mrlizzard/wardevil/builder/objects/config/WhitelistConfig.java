@@ -4,14 +4,14 @@ import java.util.List;
 
 public class WhitelistConfig {
 
-    private List<String>            whitlist;
+    private List<String>            whitelist;
 
     public WhitelistConfig(List<String> whitelist) {
-        this.whitlist = whitelist;
+        this.whitelist = whitelist;
     }
 
-    public List<String> getWhitlist() {
-        return whitlist;
+    public List<String> getWhitelist() {
+        return whitelist;
     }
 
 }

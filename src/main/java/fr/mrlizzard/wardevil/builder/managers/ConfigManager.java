@@ -3,7 +3,6 @@ package fr.mrlizzard.wardevil.builder.managers;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
-import fr.mrlizzard.wardevil.builder.objects.config.BlacklistConfig;
 import fr.mrlizzard.wardevil.builder.objects.config.Config;
 import fr.mrlizzard.wardevil.builder.objects.config.PlayersConfig;
 import fr.mrlizzard.wardevil.builder.objects.config.WhitelistConfig;
@@ -18,9 +17,7 @@ public class ConfigManager {
     private File                    data;
 
     private Config                  config;
-    private BlacklistConfig         blacklistConfig;
     private WhitelistConfig         whitelistConfig;
-    private PlayersConfig           playersConfig;
 
     public ConfigManager(WardBuilder instance) {
         this.instance = instance;
@@ -30,8 +27,8 @@ public class ConfigManager {
 
     private Object parseJsonFile(String file, Type type) {
         File config = new File(data, file);
-        String content = null;
-        Object result = null;
+        String content;
+        Object result;
 
         if (!config.exists()) {
             missing = file;
@@ -60,14 +57,10 @@ public class ConfigManager {
     public boolean loadFiles() {
         if (!data.exists()) {
             data.mkdirs();
-            missing = "data folder";
-            return false;
         }
 
         config = ((Config) this.parseJsonFile("config.json", Config.class));
-        blacklistConfig = ((BlacklistConfig) this.parseJsonFile("blacklist.json", BlacklistConfig.class));
         whitelistConfig = ((WhitelistConfig) parseJsonFile("whitelist.json", WhitelistConfig.class));
-        playersConfig = ((PlayersConfig) parseJsonFile("players.json", PlayersConfig.class));
 
         return true;
     }
@@ -76,16 +69,8 @@ public class ConfigManager {
         return missing;
     }
 
-    public BlacklistConfig getBlacklistConfig() {
-        return blacklistConfig;
-    }
-
     public Config getConfig() {
         return config;
-    }
-
-    public PlayersConfig getPlayersConfig() {
-        return playersConfig;
     }
 
     public WhitelistConfig getWhitelistConfig() {
