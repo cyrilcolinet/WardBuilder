@@ -44,6 +44,12 @@ public class BuildManager {
         File playerFile = new File(instance.getDataFolder(), "players/" + uuid.toString() + ".json");
 
         if (!playerFile.exists()) {
+            try {
+                playerFile.createNewFile();
+            } catch (Exception except) {
+                instance.getLog().error("Unable to create " + uuid.toString() + ".json (" + except.getMessage() + ").");
+                return null;
+            }
             buildPlayer = new BuildPlayer(instance, uuid);
             return buildPlayer;
         }
@@ -74,6 +80,7 @@ public class BuildManager {
             buildPlayer = loadPlayerFile(uuid);
 
             players.put(uuid, buildPlayer);
+            instance.getLog().info("New player comes: " + uuid.toString());
             return buildPlayer;
         }
 
@@ -88,4 +95,7 @@ public class BuildManager {
         return whitelisted;
     }
 
+    public Map<UUID, BuildPlayer> getPlayers() {
+        return players;
+    }
 }

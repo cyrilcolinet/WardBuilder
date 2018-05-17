@@ -24,7 +24,7 @@ public class WardBuilder extends JavaPlugin {
 
         instance = this;
         logger = new Logger(this);
-        gson = new GsonBuilder().setPrettyPrinting().create();
+        gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
         config = new ConfigManager(this);
         buildManager = new BuildManager(this);
     }

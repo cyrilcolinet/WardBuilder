@@ -23,7 +23,7 @@ public class ListenersManager {
     private void loadListeners() {
         pluginManager.registerEvents(new PlayerLoginListener(instance), instance);
         pluginManager.registerEvents(new PlayerJoinListener(instance), instance);
-        pluginManager.registerEvents(new PlayerDisconnectListener(), instance);
+        pluginManager.registerEvents(new PlayerDisconnectListener(instance), instance);
         pluginManager.registerEvents(new ServerListener(instance), instance);
         pluginManager.registerEvents(new AsyncPlayerChatListener(), instance);
     }

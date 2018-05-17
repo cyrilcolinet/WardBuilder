@@ -23,8 +23,6 @@ public class PlayerLoginListener implements Listener {
             player.kickPlayer(ChatColor.RED + "Vous n'avez pas la permission de rentrer" +
                     " sur ce serveur.");
         }
-
-        // TODO: Check player configuration
     }
 
 }

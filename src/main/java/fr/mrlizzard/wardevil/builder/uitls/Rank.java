@@ -2,8 +2,9 @@ package fr.mrlizzard.wardevil.builder.uitls;
 
 public enum Rank {
 
-    SUPER_USER      (true, "prefix"),
-    OWNER           (false, "prefix");
+    SUPER_USER      (true, "superuser"),
+    OWNER           (false, "owner"),
+    SPECTATOR       (false, "spec");
 
     Boolean         op;
     String          prefix;
