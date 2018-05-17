@@ -54,11 +54,22 @@ public class ConfigManager {
         return null;
     }
 
+    private void checkMisc() {
+        File worldsDir = new File(data, "worlds");
+        File playersDir = new File(data, "players");
+
+        if (!worldsDir.exists())
+            worldsDir.mkdirs();
+        if (!playersDir.mkdirs())
+            playersDir.mkdirs();
+    }
+
     public boolean loadFiles() {
         if (!data.exists()) {
             data.mkdirs();
         }
 
+        this.checkMisc();
         config = ((Config) this.parseJsonFile("config.json", Config.class));
         whitelistConfig = ((WhitelistConfig) parseJsonFile("whitelist.json", WhitelistConfig.class));
 
