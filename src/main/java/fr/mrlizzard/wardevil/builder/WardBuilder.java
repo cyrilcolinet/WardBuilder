@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class WardBuilder extends JavaPlugin {
 
+    private static WardBuilder      instance;
+
     private Logger                  logger;
     private Gson                    gson;
     private ConfigManager           config;
@@ -20,6 +22,7 @@ public class WardBuilder extends JavaPlugin {
     public void onLoad() {
         super.onLoad();
 
+        instance = this;
         logger = new Logger(this);
         gson = new GsonBuilder().setPrettyPrinting().create();
         config = new ConfigManager(this);
@@ -54,4 +57,9 @@ public class WardBuilder extends JavaPlugin {
     public BuildManager getManager() {
         return buildManager;
     }
+
+    public static WardBuilder getInstance() {
+        return instance;
+    }
+
 }

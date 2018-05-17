@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.objects.config.Config;
-import fr.mrlizzard.wardevil.builder.objects.config.PlayersConfig;
 import fr.mrlizzard.wardevil.builder.objects.config.WhitelistConfig;
 
 import java.io.File;
