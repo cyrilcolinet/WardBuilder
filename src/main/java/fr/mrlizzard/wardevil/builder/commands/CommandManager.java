@@ -23,21 +23,19 @@ public class CommandManager implements CommandExecutor {
     }
 
     private void configureCommands() {
-        commands.put(new WorldCommand(this.instance, "world"), "Gérer les mondes");
+        commands.put(new WorldCommand(instance, "worlds"), "Gérer les mondes");
+        commands.put(new PlayerCommand(instance, "players"), "Gérer les joueurs");
     }
 
     private void displayHelp(CommandSender sender) {
-        sender.sendMessage(ChatColor.RED + "--[ " +
-                ChatColor.GOLD + "WardBuilder | Help " +
-                ChatColor.RED + "]--" + ChatColor.RESET);
-        sender.sendMessage(ChatColor.YELLOW + " /build help\t\t" + ChatColor.WHITE +
-                "- " + ChatColor.GOLD + "Afficher la page d'aide" + ChatColor.RESET);
+        sender.sendMessage(ChatColor.RED + "--[ " + ChatColor.GOLD + "WardBuilder | Help " + ChatColor.RED + "]--");
+        sender.sendMessage(ChatColor.YELLOW + " /build help   \t" + ChatColor.WHITE + "- " + ChatColor.GOLD + "Afficher la page d'aide");
 
-        commands.entrySet().forEach(entry -> {
-            String cmd = ChatColor.YELLOW + " /build " + entry.getKey().getSubCommand();
-            String desc = ChatColor.WHITE + "- " + ChatColor.GOLD + entry.getValue();
+        commands.forEach((key, value) -> {
+            String cmd = ChatColor.YELLOW + " /build " + key.getSubCommand();
+            String desc = ChatColor.WHITE + "- " + ChatColor.GOLD + value;
 
-            sender.sendMessage(cmd + ChatColor.RESET + "\t\t" + desc + ChatColor.RESET);
+            sender.sendMessage(cmd + ChatColor.RESET + "   \t" + desc + ChatColor.RESET);
         });
     }
 

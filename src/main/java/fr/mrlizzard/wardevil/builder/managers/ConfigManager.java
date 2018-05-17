@@ -10,18 +10,12 @@ import fr.mrlizzard.wardevil.builder.objects.config.WhitelistConfig;
 
 import java.io.File;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ConfigManager {
 
     private WardBuilder             instance;
     private String                  missing;
     private File                    data;
-    private Map<String, Type>       configs;
-    private List<Object>            loaders;
 
     private Config                  config;
     private BlacklistConfig         blacklistConfig;
@@ -32,8 +26,6 @@ public class ConfigManager {
         this.instance = instance;
         this.missing = null;
         this.data = instance.getDataFolder();
-        this.configs = new HashMap<>();
-        this.loaders = new ArrayList<>();
     }
 
     private Object parseJsonFile(String file, Type type) {
@@ -41,7 +33,7 @@ public class ConfigManager {
         String content = null;
         Object result = null;
 
-        if (config.exists()) {
+        if (!config.exists()) {
             missing = file;
             return null;
         }
@@ -49,12 +41,12 @@ public class ConfigManager {
         try {
             content = Files.toString(config, Charsets.UTF_8);
             if (content == null || content.equals(""))
-                throw new Exception(file + " content is null.");
+                throw new Exception("The file " + file + " have a null content.");
 
             try {
                 result = instance.getGson().fromJson(content, type);
             } catch (Exception err) {
-                throw new Exception(file + " file is not a valid JSON format.");
+                throw new Exception("The file " + file + " is not a valid JSON format.");
             }
 
             return result;
@@ -66,25 +58,17 @@ public class ConfigManager {
     }
 
     public boolean loadFiles() {
-        Integer loop = 0;
-
         if (!data.exists()) {
             data.mkdirs();
             missing = "data folder";
             return false;
         }
 
-        configs.put("config.json", Config.class);
-        configs.put("blacklist.json", BlacklistConfig.class);
-        configs.put("whitelist.json", WhitelistConfig.class);
-        configs.put("players.json", PlayersConfig.class);
-        configs.forEach((key, value) -> loaders.add(parseJsonFile(key, value)));
+        config = ((Config) this.parseJsonFile("config.json", Config.class));
+        blacklistConfig = ((BlacklistConfig) this.parseJsonFile("blacklist.json", BlacklistConfig.class));
+        whitelistConfig = ((WhitelistConfig) parseJsonFile("whitelist.json", WhitelistConfig.class));
+        playersConfig = ((PlayersConfig) parseJsonFile("players.json", PlayersConfig.class));
 
-        config = ((Config)loaders.get(0));
-        blacklistConfig = ((BlacklistConfig)loaders.get(1));
-        whitelistConfig = ((WhitelistConfig)loaders.get(2));
-        playersConfig = ((PlayersConfig)loaders.get(3));
-        
         return true;
     }
 

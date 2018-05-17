@@ -14,6 +14,7 @@ public class WardBuilder extends JavaPlugin {
     private Logger                  logger;
     private Gson                    gson;
     private ConfigManager           config;
+    private BuildManager            buildManager;
 
     @Override
     public void onLoad() {
@@ -34,7 +35,7 @@ public class WardBuilder extends JavaPlugin {
             return;
         }
 
-        new BuildManager(this);
+        buildManager = new BuildManager(this);
         new ListenersManager(this);
         new CommandManager(this);
     }
@@ -54,5 +55,9 @@ public class WardBuilder extends JavaPlugin {
 
     public ConfigManager getConfigManager() {
         return config;
+    }
+
+    public BuildManager getManager() {
+        return buildManager;
     }
 }
