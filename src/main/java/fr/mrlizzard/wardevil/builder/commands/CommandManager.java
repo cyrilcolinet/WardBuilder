@@ -29,7 +29,8 @@ public class CommandManager implements CommandExecutor {
 
     private void displayHelp(CommandSender sender) {
         sender.sendMessage(ChatColor.RED + "--[ " + ChatColor.GOLD + "WardBuilder | Help " + ChatColor.RED + "]--");
-        sender.sendMessage(ChatColor.YELLOW + " /build help   \t" + ChatColor.WHITE + "- " + ChatColor.GOLD + "Afficher la page d'aide");
+        sender.sendMessage(ChatColor.YELLOW + " /build help   \t" + ChatColor.WHITE + "- " + ChatColor.GOLD +
+                "Afficher la page d'aide (cette page)");
 
         commands.forEach((key, value) -> {
             String cmd = ChatColor.YELLOW + " /build " + key.getSubCommand();

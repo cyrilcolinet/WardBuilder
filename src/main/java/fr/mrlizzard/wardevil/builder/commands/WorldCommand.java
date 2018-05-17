@@ -11,14 +11,11 @@ public class WorldCommand extends ACommand {
     }
 
     @Override
-    public void displayHelp(CommandSender sender) {
-
-    }
-
-    @Override
     public boolean executeCommand(CommandSender sender, Command command, String[] args) {
+        this.setValues(sender, command, args);
+
         if (args.length <= 1 || args[1].equalsIgnoreCase("help")) {
-            this.displayHelp(sender);
+            //this.displayHelp(sender);
             return true;
         }
 
