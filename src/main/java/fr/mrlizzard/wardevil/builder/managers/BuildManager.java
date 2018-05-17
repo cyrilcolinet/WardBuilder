@@ -1,8 +1,6 @@
 package fr.mrlizzard.wardevil.builder.managers;
 
 import fr.mrlizzard.wardevil.builder.WardBuilder;
-import fr.mrlizzard.wardevil.builder.objects.config.Config;
-import fr.mrlizzard.wardevil.builder.objects.config.WhitelistConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +22,16 @@ public class BuildManager {
     }
 
     private void loadServerConfiguration() {
-        Config config = instance.getConfigManager().getConfig();
-        WhitelistConfig whitelistConfig = instance.getConfigManager().getWhitelistConfig();
+        if (!instance.getConfigManager().loadFiles()) {
+            if (instance.getConfigManager().getMissing() != null)
+                instance.getLog().error("Config's missing (" + instance.getConfigManager().getMissing() + ").");
+            return;
+        }
 
-        config.getSuperUsers().forEach(uuid -> superUsers.add(UUID.fromString(uuid)));
-        whitelistConfig.getWhitelist().forEach(uuid -> whitelisted.add(UUID.fromString(uuid)));
+        instance.getConfigManager().getConfig().getSuperUsers().forEach(uuid -> superUsers.add(UUID.fromString(uuid)));
+        instance.getConfigManager().getWhitelistConfig().getWhitelist().forEach(uuid -> {
+            whitelisted.add(UUID.fromString(uuid));
+        });
     }
 
     public List<UUID> getSuperUsers() {
