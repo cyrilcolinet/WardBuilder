@@ -6,28 +6,34 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ACommand {
 
-    private WardBuilder             instance;
-    private String                  subCommand;
+    public WardBuilder                          instance;
+    public String                               subCommand;
 
-    private CommandSender            sender;
-    private Command                  command;
-    private String[]                 args;
+    public CommandSender                        sender;
+    public Command                              command;
+    public String[]                             args;
+
+    public Map<Map<String, String>, Boolean>    subCommands;
 
     ACommand(WardBuilder instance, String subCommand) {
         this.instance = instance;
         this.subCommand = subCommand;
+        this.subCommands = new HashMap<>();
 
-        this.instance.getLog().info("Loading " + subCommand + " subcommand...");
+        this.instance.getLog().info("Loading /build " + subCommand + " command...");
     }
 
     public void setValues(CommandSender sender, Command command, String[] args) {
         this.sender = sender;
         this.command = command;
         this.args = args;
+
+        this.loadSubCommands();
     }
 
     public void displayHelp(Map<Map<String, String>, Boolean> subCommands) {
@@ -46,22 +52,29 @@ public abstract class ACommand {
         });
     }
 
-    public abstract boolean executeCommand(CommandSender sender, Command command, String[] args);
+    public abstract void loadSubCommands();
+
+    public boolean executeCommand(CommandSender sender, Command command, String[] args) {
+        this.setValues(sender, command, args);
+
+        if (args.length <= 1 || args[1].equalsIgnoreCase("help")) {
+            this.displayHelp(subCommands);
+            return true;
+        }
+
+        for (Map.Entry<Map<String, String>, Boolean> entry : subCommands.entrySet()) {
+            for (Map.Entry<String, String> keyEntry : entry.getKey().entrySet()) {
+                instance.getLog().info(args[2]);
+                if (args[2].equalsIgnoreCase(keyEntry.getKey()))
+                    return entry.getValue();
+            }
+        }
+
+        return true;
+    }
 
     String getSubCommand() {
         return subCommand;
-    }
-
-    public CommandSender getSender() {
-        return sender;
-    }
-
-    public Command getCommand() {
-        return command;
-    }
-
-    public String[] getArgs() {
-        return args;
     }
 
 }

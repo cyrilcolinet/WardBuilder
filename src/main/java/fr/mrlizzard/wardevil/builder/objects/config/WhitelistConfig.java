@@ -6,8 +6,7 @@ import java.util.List;
 
 public class WhitelistConfig {
 
-    @Expose
-    private List<String>            whitelist;
+    @Expose private List<String>        whitelist;
 
     public WhitelistConfig(List<String> whitelist) {
         this.whitelist = whitelist;

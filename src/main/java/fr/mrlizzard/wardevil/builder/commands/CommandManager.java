@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class CommandManager implements CommandExecutor {
 
-    private WardBuilder             instance;
-    private Map<ACommand, String>   commands;
+    private WardBuilder                 instance;
+    private Map<ACommand, String>       commands;
 
     public CommandManager(WardBuilder instance) {
         this.instance = instance;

@@ -11,6 +11,11 @@ public class WorldCommand extends ACommand {
     }
 
     @Override
+    public void loadSubCommands() {
+
+    }
+
+    @Override
     public boolean executeCommand(CommandSender sender, Command command, String[] args) {
         this.setValues(sender, command, args);
 

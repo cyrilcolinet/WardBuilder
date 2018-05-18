@@ -43,6 +43,10 @@ public class BuildPlayer {
         return rank;
     }
 
+    public void editRank(Rank rank) {
+        this.rank = rank;
+    }
+
     public void savePlayerConfig() {
         FileWriter writer;
 
