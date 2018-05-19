@@ -46,7 +46,9 @@ public class WardBuilder extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+        instance = null;
 
+        getServer().getOnlinePlayers().forEach(player -> player.kickPlayer("§cRedémarrage en cours."));
         connector.destroy();
     }
 

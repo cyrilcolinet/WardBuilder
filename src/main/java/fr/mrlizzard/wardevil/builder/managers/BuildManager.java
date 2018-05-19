@@ -65,7 +65,6 @@ public class BuildManager {
             buildPlayer = loadPlayerConfig(uuid);
 
             players.put(uuid, buildPlayer);
-            instance.getLog().info("New player comes: " + uuid.toString());
             return buildPlayer;
         }
 
