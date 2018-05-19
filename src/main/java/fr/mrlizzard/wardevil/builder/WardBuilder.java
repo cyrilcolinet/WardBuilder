@@ -32,6 +32,7 @@ public class WardBuilder extends JavaPlugin {
         config = new ConfigManager(this);
         buildManager = new BuildManager(this);
         connector = new RedisLoader(this);
+        uuidTranslator = new UUIDTranslator(this);
     }
 
     @Override
