@@ -4,9 +4,8 @@ import com.google.gson.annotations.Expose;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.uitls.Rank;
 import org.bukkit.entity.Player;
+import redis.clients.jedis.Jedis;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.UUID;
 
 public class BuildPlayer {
@@ -49,36 +48,14 @@ public class BuildPlayer {
     }
 
     public void savePlayerConfig() {
-        File playerFile = new File(instance.getDataFolder(), "players/" + uuid.toString() + ".json");
-        FileWriter writer;
-        String content;
+        Jedis jedis = instance.getConnector().getRessource();
+        String key = "players:" + uuid.toString();
 
-        try {
-            content = instance.getGson().toJson(this);
-            instance.getLog().warning(content);
-        } catch (Exception exception) {
-            instance.getLog().error(exception.getMessage());
-            return;
-        }
-
-        if (!playerFile.exists()) {
-            try {
-                writer = new FileWriter(instance.getDataFolder() + "/players/" + uuid.toString() + ".json");
-
-                try {
-                    writer.write(content);
-                } catch (Exception err) {
-                    throw new Exception("File " + uuid.toString() + ".json isn't a valid json file.");
-                }
-                writer.close();
-            } catch (Exception except) {
-                instance.getLog().error(except.getMessage());
-            }
-
-            return;
-        }
-
-
+        jedis.hset(key, "uuid", uuid.toString());
+        jedis.hset(key, "rank", rank.toString());
+        jedis.close();
+        instance.getManager().deletePlayer(uuid);
+        instance.getLog().info("Data for " + uuid.toString() + " been saved.");
     }
 
 }

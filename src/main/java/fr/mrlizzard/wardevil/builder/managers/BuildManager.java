@@ -4,6 +4,9 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.objects.BuildPlayer;
+import fr.mrlizzard.wardevil.builder.uitls.Rank;
+import org.bukkit.entity.Player;
+import redis.clients.jedis.Jedis;
 
 import java.io.File;
 import java.util.*;
@@ -38,40 +41,28 @@ public class BuildManager {
         });
     }
 
-    private BuildPlayer loadPlayerFile(UUID uuid) {
+    private BuildPlayer loadPlayerConfig(UUID uuid) {
+        Jedis jedis = instance.getConnector().getRessource();
+        String key = "players:" + uuid.toString();
+        String uuidStr;
+        String rankStr;
         BuildPlayer buildPlayer;
-        String content;
-        File playerFile = new File(instance.getDataFolder(), "players/" + uuid.toString() + ".json");
 
-        if (!playerFile.exists()) {
+        if (!jedis.exists(key)) {
             buildPlayer = new BuildPlayer(instance, uuid);
             return buildPlayer;
         }
 
-        try {
-            content = Files.toString(playerFile, Charsets.UTF_8);
-            if (content == null || content.equals(""))
-                throw new Exception("The file " + uuid.toString() + ".json have a null content.");
-
-            try {
-                buildPlayer = instance.getGson().fromJson(content, BuildPlayer.class);
-            } catch (Exception err) {
-                throw new Exception("The file " + uuid.toString() + ".json is not a valid JSON format.");
-            }
-
-            return buildPlayer;
-        } catch (Exception except) {
-            instance.getLog().error(except.getMessage());
-        }
-
-        return null;
+        uuidStr = ((jedis.hexists(key, "uuid")) ? jedis.hget(key, "uuid") : uuid.toString());
+        rankStr = ((jedis.hexists(key, "rank")) ? jedis.hget(key, "rank") : "SPECTATOR");
+        return new BuildPlayer(uuidStr, rankStr);
     }
 
     public BuildPlayer getPlayer(UUID uuid) {
         BuildPlayer buildPlayer;
 
         if (!players.containsKey(uuid)) {
-            buildPlayer = loadPlayerFile(uuid);
+            buildPlayer = loadPlayerConfig(uuid);
 
             players.put(uuid, buildPlayer);
             instance.getLog().info("New player comes: " + uuid.toString());
@@ -79,6 +70,24 @@ public class BuildManager {
         }
 
         return players.get(uuid);
+    }
+
+    public void deletePlayer(UUID uuid) {
+        players.remove(uuid);
+    }
+
+    public void changePlayerParam(UUID uuid, String key, String value) {
+        Jedis jedis = instance.getConnector().getRessource();
+        String redisKey = "players:" + uuid.toString();
+        Player player = instance.getServer().getPlayer(uuid);
+
+        jedis.hset(redisKey, key, value);
+        jedis.close();
+        instance.getLog().info("Info for " + uuid + " changed (" + key + " -> " + value + ").");
+
+        if (player != null) {
+            player.sendMessage("§aUne valeur a été changée: " + key + " -> " + value);
+        }
     }
 
     public List<UUID> getSuperUsers() {

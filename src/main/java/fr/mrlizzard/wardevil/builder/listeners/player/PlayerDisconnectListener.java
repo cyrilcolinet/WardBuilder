@@ -25,7 +25,6 @@ public class PlayerDisconnectListener implements Listener {
             return;
         }
 
-        instance.getManager().getPlayers().remove(player.getUniqueId());
         buildPlayer.savePlayerConfig();
     }
 

@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class PlayerCommand extends ACommand {
 
@@ -32,17 +33,10 @@ public class PlayerCommand extends ACommand {
 
     private boolean promotePlayer() {
         Rank rank;
-        Player player;
-        BuildPlayer buildPlayer;
+        UUID uuid;
 
         if (args.length < 4) {
             sender.sendMessage("§cUsage: /build players promote <player> <rank>");
-            return true;
-        }
-
-        player = instance.getServer().getPlayer(args[2]);
-        if (player == null) {
-            sender.sendMessage("§cAucun joueur nommé " + args[2] + " trouvé.");
             return true;
         }
 
@@ -53,9 +47,14 @@ public class PlayerCommand extends ACommand {
             return true;
         }
 
-        buildPlayer = instance.getManager().getPlayer(player.getUniqueId());
-        buildPlayer.editRank(rank);
-        sender.sendMessage("§a" + player.getName() + " a bien été promu " + args[3]);
+        uuid = instance.getUuidTranslator().getUUID(args[2], true);
+        if (uuid == null) {
+            sender.sendMessage("§cAucun joueur nommé " + args[2] + " trouvé.");
+            return true;
+        }
+
+        instance.getManager().changePlayerParam(uuid, "rank", rank.toString());
+        sender.sendMessage("§a" + args[2] + " a bien été promu " + StringUtils.capitalize(args[3].toLowerCase()));
         return true;
     }
 

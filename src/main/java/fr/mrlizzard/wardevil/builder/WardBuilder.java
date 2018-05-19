@@ -2,11 +2,13 @@ package fr.mrlizzard.wardevil.builder;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fr.mrlizzard.wardevil.builder.core.RedisLoader;
 import fr.mrlizzard.wardevil.builder.listeners.ListenersManager;
 import fr.mrlizzard.wardevil.builder.commands.CommandManager;
 import fr.mrlizzard.wardevil.builder.managers.BuildManager;
 import fr.mrlizzard.wardevil.builder.managers.ConfigManager;
 import fr.mrlizzard.wardevil.builder.uitls.Logger;
+import fr.mrlizzard.wardevil.builder.uitls.players.UUIDTranslator;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class WardBuilder extends JavaPlugin {
@@ -17,6 +19,8 @@ public class WardBuilder extends JavaPlugin {
     private Gson                    gson;
     private ConfigManager           config;
     private BuildManager            buildManager;
+    private RedisLoader             connector;
+    private UUIDTranslator          uuidTranslator;
 
     @Override
     public void onLoad() {
@@ -27,6 +31,7 @@ public class WardBuilder extends JavaPlugin {
         gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
         config = new ConfigManager(this);
         buildManager = new BuildManager(this);
+        connector = new RedisLoader(this);
     }
 
     @Override
@@ -40,6 +45,8 @@ public class WardBuilder extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+
+        connector.destroy();
     }
 
     public Logger getLog() {
@@ -56,6 +63,14 @@ public class WardBuilder extends JavaPlugin {
 
     public BuildManager getManager() {
         return buildManager;
+    }
+
+    public RedisLoader getConnector() {
+        return connector;
+    }
+
+    public UUIDTranslator getUuidTranslator() {
+        return uuidTranslator;
     }
 
     public static WardBuilder getInstance() {
