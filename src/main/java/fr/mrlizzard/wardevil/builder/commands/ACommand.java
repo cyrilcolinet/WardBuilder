@@ -41,14 +41,21 @@ public abstract class ACommand {
     public abstract void loadSubCommands();
 
     public boolean runCommand(CommandSender sender, Command cmd, String[] args) {
-        this.setValues(sender, cmd, args);
+        try {
+            this.setValues(sender, cmd, args);
 
-        if (args.length <= 1 || args[1].equalsIgnoreCase("help")) {
-            this.displayHelp();
-            return true;
+            if (args.length <= 1 || args[1].equalsIgnoreCase("help")) {
+                this.displayHelp();
+                return true;
+            }
+
+            return this.executeCommand();
+        } catch(Exception err) {
+            sender.sendMessage("§cInternal error: " + err.toString() + " (see logs in console).");
+            err.printStackTrace();
         }
 
-        return this.executeCommand();
+        return true;
     }
 
     public abstract boolean executeCommand();
