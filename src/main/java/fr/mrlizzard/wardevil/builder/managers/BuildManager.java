@@ -82,7 +82,7 @@ public class BuildManager {
 
         jedis.hset(redisKey, key, value);
         if (!jedis.hexists(redisKey, "uuid"))
-            jedis.hset(redisKey, "uuid", uuid.toString())
+            jedis.hset(redisKey, "uuid", uuid.toString());
         jedis.close();
         instance.getLog().info("Info for " + uuid + " changed (" + key + " -> " + value + ").");
 
