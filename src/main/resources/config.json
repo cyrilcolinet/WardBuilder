@@ -4,5 +4,11 @@
   "superUsers": [
     "ce2675b3-fb54-4b88-98b0-494cf7dc1dab",
     "9cfcfa74-1b63-4023-839e-50b11fc334e6"
-  ]
+  ],
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "databse": 0,
+    "auth": null
+  }
 }

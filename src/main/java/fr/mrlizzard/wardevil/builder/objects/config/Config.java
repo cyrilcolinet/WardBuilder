@@ -9,11 +9,13 @@ public class Config {
     @Expose private String              serverName;
     @Expose private String              motd;
     @Expose private List<String>        superUsers;
+    @Expose private RedisConfig         redis;
 
-    public Config(String serverName, String motd, List<String> superUsers) {
+    public Config(String serverName, String motd, List<String> superUsers, RedisConfig redis) {
         this.serverName = serverName;
         this.motd = motd;
         this.superUsers = superUsers;
+        this.redis = redis;
     }
 
     public String getServerName() {
@@ -28,4 +30,7 @@ public class Config {
         return superUsers;
     }
 
+    public RedisConfig getRedisConfig() {
+        return redis;
+    }
 }
