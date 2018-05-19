@@ -6,26 +6,26 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandManager implements CommandExecutor {
 
     private WardBuilder                 instance;
-    private Map<ACommand, String>       commands;
+    private List<ACommand>              commands;
 
     public CommandManager(WardBuilder instance) {
         this.instance = instance;
-        this.commands = new HashMap<>();
+        this.commands = new ArrayList<>();
 
         this.configureCommands();
         this.instance.getCommand("build").setExecutor(this);
     }
 
     private void configureCommands() {
-        commands.put(new WorldCommand(instance, "worlds"), "Gérer les mondes");
-        commands.put(new PlayerCommand(instance, "players"), "Gérer les joueurs");
-        commands.put(new GlobalCommand(instance, "global"), "Envoyer un message global");
+        commands.add(new WorldCommand(instance, "worlds"));
+        commands.add(new PlayerCommand(instance, "players"));
+        commands.add(new GlobalCommand(instance, "global"));
     }
 
     private void displayHelp(CommandSender sender) {
@@ -33,9 +33,9 @@ public class CommandManager implements CommandExecutor {
         sender.sendMessage(ChatColor.YELLOW + " /build help   \t\t" + ChatColor.WHITE + "- " + ChatColor.GOLD +
                 "Afficher la page d'aide (cette page)");
 
-        commands.forEach((key, value) -> {
-            String cmd = ChatColor.YELLOW + " /build " + key.getSubCommand();
-            String desc = ChatColor.WHITE + "- " + ChatColor.GOLD + value;
+        commands.forEach(obj -> {
+            String cmd = ChatColor.YELLOW + " /build " + obj.getSubCommand();
+            String desc = ChatColor.WHITE + "- " + ChatColor.GOLD + obj.getDescription();
 
             sender.sendMessage(cmd + ChatColor.RESET + "   \t\t" + desc + ChatColor.RESET);
         });
@@ -47,12 +47,12 @@ public class CommandManager implements CommandExecutor {
             return true;
         }
 
-        for (Map.Entry<ACommand, String> entry : commands.entrySet()) {
-            if (entry.getKey().getSubCommand().equalsIgnoreCase(args[0]))
-                return entry.getKey().executeCommand(sender, command, args);
+        for (ACommand cmd : commands) {
+            if (cmd.getSubCommand().equalsIgnoreCase(args[0]))
+                return cmd.runCommand(sender, command, args);
         }
 
-        sender.sendMessage("Unknown command");
+        sender.sendMessage("§cCommande inconnue. Taper /build help pour voir l'aide.");
         return false;
     }
 }

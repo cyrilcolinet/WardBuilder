@@ -1,13 +1,11 @@
 package fr.mrlizzard.wardevil.builder.commands;
 
 import fr.mrlizzard.wardevil.builder.WardBuilder;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 
 public class WorldCommand extends ACommand {
 
     public WorldCommand(WardBuilder instance, String subCommand) {
-        super(instance, subCommand);
+        super(instance, subCommand, "Gestion des mondes");
     }
 
     @Override
@@ -16,14 +14,12 @@ public class WorldCommand extends ACommand {
     }
 
     @Override
-    public boolean executeCommand(CommandSender sender, Command command, String[] args) {
-        this.setValues(sender, command, args);
+    public void displayHelp() {
 
-        if (args.length <= 1 || args[1].equalsIgnoreCase("help")) {
-            //this.displayHelp(sender);
-            return true;
-        }
+    }
 
+    @Override
+    public boolean executeCommand() {
         return true;
     }
 }
