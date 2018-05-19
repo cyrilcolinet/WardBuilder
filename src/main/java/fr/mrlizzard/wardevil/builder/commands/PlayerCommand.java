@@ -47,12 +47,12 @@ public class PlayerCommand extends ACommand {
             return true;
         }
 
-        //try {
+        try {
             uuid = instance.getUuidTranslator().getUUID(args[2], true);
-        //} catch (NullPointerException err) {
-        //    sender.sendMessage("§cAucun joueur nommé " + args[2] + " trouvé.");
-        //    return true;
-        //}
+        } catch (NullPointerException err) {
+            sender.sendMessage("§cAucun joueur nommé " + args[2] + " trouvé.");
+            return true;
+        }
 
         instance.getManager().changePlayerParam(uuid, "rank", rank.toString());
         sender.sendMessage("§a" + args[2] + " a bien été promu " + StringUtils.capitalize(args[3].toLowerCase()));
