@@ -47,8 +47,9 @@ public class PlayerCommand extends ACommand {
             return true;
         }
 
-        uuid = instance.getUuidTranslator().getUUID(args[2], true);
-        if (uuid == null) {
+        try {
+            uuid = instance.getUuidTranslator().getUUID(args[2], true);
+        } catch (NullPointerException err) {
             sender.sendMessage("§cAucun joueur nommé " + args[2] + " trouvé.");
             return true;
         }
