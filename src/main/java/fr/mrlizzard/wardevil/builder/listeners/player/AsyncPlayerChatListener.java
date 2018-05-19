@@ -23,6 +23,7 @@ public class AsyncPlayerChatListener implements Listener {
 
             glob = new GlobalManager();
             glob.sendGlobalMessage(player, Arrays.asList(split));
+            event.setCancelled(true);
             return;
         }
     }

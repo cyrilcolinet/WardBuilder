@@ -25,6 +25,7 @@ public class PlayerDisconnectListener implements Listener {
             return;
         }
 
+        event.setQuitMessage(buildPlayer.getRank().getPrefix() + player.getName() + " §6nous a quitté.");
         buildPlayer.savePlayerConfig();
     }
 

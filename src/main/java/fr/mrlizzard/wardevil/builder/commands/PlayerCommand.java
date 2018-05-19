@@ -3,7 +3,6 @@ package fr.mrlizzard.wardevil.builder.commands;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.uitls.Rank;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import redis.clients.jedis.Jedis;
 
 import java.util.Map;
