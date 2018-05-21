@@ -25,6 +25,10 @@ public class WorldCommand extends ACommand {
     public void loadSubCommands() {
         subCommands.put("list", () -> listWorlds());
         subCommands.put("add", () -> addWorld());
+        subCommands.put("del", () -> deleteWorld());
+        subCommands.put("disable", () -> disableWorld());
+        subCommands.put("enable", () -> enableWorld());
+        subCommands.put("players", () -> playersGesture());
     }
 
     @Override
@@ -122,6 +126,22 @@ public class WorldCommand extends ACommand {
 
         manager.getWorlds().put(worldName, new World(instance, worldName));
         instance.getServer().broadcastMessage("§aNouveau monde créé: §e" + worldName);
+    }
+
+    private void deleteWorld() {
+
+    }
+
+    private void disableWorld() {
+
+    }
+
+    private void enableWorld() {
+
+    }
+
+    private void playersGesture() {
+        
     }
 
     @Override
