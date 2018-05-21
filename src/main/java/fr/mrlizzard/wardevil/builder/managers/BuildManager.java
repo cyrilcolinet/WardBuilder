@@ -1,14 +1,10 @@
 package fr.mrlizzard.wardevil.builder.managers;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.objects.BuildPlayer;
-import fr.mrlizzard.wardevil.builder.uitls.Rank;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 
-import java.io.File;
 import java.util.*;
 
 public class BuildManager {
