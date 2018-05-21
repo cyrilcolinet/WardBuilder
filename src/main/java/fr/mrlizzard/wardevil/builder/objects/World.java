@@ -1,5 +1,6 @@
 package fr.mrlizzard.wardevil.builder.objects;
 
+import com.google.gson.annotations.Expose;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
@@ -9,14 +10,20 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class World implements Runnable {
 
-    private WardBuilder             instance;
-    private String                  name;
-    private Integer                 connected;
+    private WardBuilder                     instance;
+    private Integer                         connected;
+    private Integer                         taskId;
 
-    private List<String>            signs;
+    @Expose private List<String>            signs;
+    @Expose private String                  name;
+    @Expose private Boolean                 disabled;
+    @Expose private Map<UUID, String>       specators;
+    @Expose private Map<UUID, String>       builders;
 
     public World(WardBuilder instance, String name) {
         this.instance = instance;
@@ -28,11 +35,9 @@ public class World implements Runnable {
     }
 
     public void startTask() {
-        Integer task;
-
         if (!instance.getWorldManager().getTasks().containsKey(this)) {
-            task = instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance, this, 0, 1);
-            instance.getWorldManager().getTasks().put(this, task);
+            taskId = instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance, this, 0, 1);
+            instance.getWorldManager().getTasks().put(this, taskId);
         }
     }
 

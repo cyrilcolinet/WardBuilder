@@ -27,7 +27,7 @@ public class WorldManager {
     private void configure() {
         File file = new File(instance.getDataFolder(), "worlds.json");
         FileReader reader;
-        Type collectionType = new TypeToken(){}.getType();
+        Type collectionType = new TypeToken<Map<String, World>>(){}.getType();
 
         try {
             if (!file.exists()) {
@@ -69,6 +69,28 @@ public class WorldManager {
                 instance.getServer().getScheduler().cancelTask(task);
             }, 600);
         });
+    }
+
+    public void saveWorldsConfigFile() {
+        File file = new File(instance.getDataFolder(), "worlds.json");
+        FileWriter writer;
+        BufferedWriter bufferedWriter;
+        String json;
+
+        try {
+            if (!file.exists())
+                file.createNewFile();
+
+            json = instance.getGson().toJson(this.worlds);
+            writer = new FileWriter(file.getAbsoluteFile());
+            bufferedWriter = new BufferedWriter(writer);
+            bufferedWriter.write(json);
+            bufferedWriter.close();
+            writer.close();
+        } catch (Exception err) {
+            instance.getLog().error("Error during save of worlds.json configuration.");
+            err.printStackTrace();
+        }
     }
 
     public Map<World, Integer> getTasks() {
