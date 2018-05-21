@@ -38,7 +38,7 @@ public class WorldManager {
             reader = new FileReader(file);
             worlds = instance.getGson().fromJson(reader, collectionType);
             reader.close();
-            worlds.values().forEach(world -> world.startTask(this));
+            worlds.values().forEach(world -> world.startTask(instance, this));
         } catch (Exception err) {
             instance.getLog().error(err.getMessage());
             err.printStackTrace();

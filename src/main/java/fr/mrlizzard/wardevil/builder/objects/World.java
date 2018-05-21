@@ -28,26 +28,28 @@ public class World implements Runnable {
         this.instance = instance;
         this.name = name;
         this.signs = new ArrayList<>();
-        this.connected = 0;
         this.disabled = false;
         this.specators = new HashMap<>();
         this.builders = new HashMap<>();
         this.safe = false;
 
-        this.startTask(instance.getWorldManager());
+        this.startTask(instance, instance.getWorldManager());
     }
 
-    public void startTask(WorldManager manager) {
-        if (!manager
-                .getTasks()
-                .containsKey(this)) {
-            taskId = instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance, this, 0, 20);
+    public void startTask(WardBuilder plugin, WorldManager manager) {
+        if (instance == null)
+            instance = plugin;
+
+        if (!manager.getTasks().containsKey(this)) {
+            taskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 0, 20);
             manager.getTasks().put(this, taskId);
         }
     }
 
     @Override
     public void run() {
+        connected = 0;
+
         for (Player player : instance.getServer().getOnlinePlayers())
             if (player.getWorld().getName().equalsIgnoreCase(name))
                 connected++;
@@ -81,8 +83,6 @@ public class World implements Runnable {
                     sign.update();
                 }
             }
-
-            connected = 0;
         });
     }
 

@@ -90,7 +90,7 @@ public class WorldCommand extends ACommand {
             }
 
             color = ((world.isDisabled()) ? ChatColor.RED : ChatColor.GREEN);
-            sender.sendMessage("  §b- " + color + world.getName());
+            sender.sendMessage("  §b- " + color + world.getName() + ((world.isProtected()) ? " §c(protégé)" : ""));
             key++;
         }
     }
