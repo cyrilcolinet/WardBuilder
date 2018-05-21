@@ -10,6 +10,7 @@ import fr.mrlizzard.wardevil.builder.managers.ConfigManager;
 import fr.mrlizzard.wardevil.builder.managers.WorldManager;
 import fr.mrlizzard.wardevil.builder.uitls.Logger;
 import fr.mrlizzard.wardevil.builder.uitls.players.UUIDTranslator;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class WardBuilder extends JavaPlugin {
@@ -30,17 +31,22 @@ public class WardBuilder extends JavaPlugin {
 
         instance = this;
         logger = new Logger(this);
+        Plugin mvPlugin = this.getServer().getPluginManager().getPlugin("Multiverse-Core");
+
+        if (mvPlugin == null)
+            logger.error("Multiverse-Core plugin not found. Add it.");
+    }
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+
         gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
         config = new ConfigManager(this);
         buildManager = new BuildManager(this);
         connector = new RedisLoader(this);
         uuidTranslator = new UUIDTranslator(this);
         worldManager = new WorldManager(this);
-    }
-
-    @Override
-    public void onEnable() {
-        super.onEnable();
 
         new ListenersManager(this);
         new CommandManager(this);
@@ -54,6 +60,7 @@ public class WardBuilder extends JavaPlugin {
         getServer().getOnlinePlayers().forEach(player -> player.kickPlayer("§cRedémarrage en cours."));
         connector.destroy();
         worldManager.killWorldTasks();
+        worldManager.saveWorldsConfigFile();
     }
 
     public Logger getLog() {

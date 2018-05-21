@@ -81,4 +81,28 @@ public class World implements Runnable {
         });
     }
 
+    public Boolean isDisabled() {
+        return disabled;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<String> getSigns() {
+        return signs;
+    }
+
+    public Map<UUID, String> getBuilders() {
+        return builders;
+    }
+
+    public Map<UUID, String> getSpecators() {
+        return specators;
+    }
+
+    public Integer getTaskId() {
+        return taskId;
+    }
+
 }

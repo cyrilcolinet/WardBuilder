@@ -97,4 +97,8 @@ public class WorldManager {
         return tasks;
     }
 
+    public Map<String, World> getWorlds() {
+        return worlds;
+    }
+
 }
