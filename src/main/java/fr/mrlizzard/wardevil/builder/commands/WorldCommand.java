@@ -119,10 +119,8 @@ public class WorldCommand extends ACommand {
         }
 
         org.bukkit.World world = instance.getServer().getWorld(worldName);
-        if (world == null) {
-            sender.sendMessage("§6[WARNING] Temporarly disabled");
-            //instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv create " + worldName + " normal -t flat");
-        }
+        if (world == null)
+            instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv create " + worldName + " normal -t flat");
 
         manager.getWorlds().put(worldName, new World(instance, worldName));
 
