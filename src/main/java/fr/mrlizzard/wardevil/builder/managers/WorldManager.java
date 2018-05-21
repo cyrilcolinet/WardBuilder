@@ -3,7 +3,6 @@ package fr.mrlizzard.wardevil.builder.managers;
 import com.google.gson.reflect.TypeToken;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.objects.World;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -38,7 +37,8 @@ public class WorldManager {
 
             reader = new FileReader(file);
             worlds = instance.getGson().fromJson(reader, collectionType);
-            worlds.values().forEach(world -> world.startTask());
+            reader.close();
+            worlds.values().forEach(world -> world.startTask(this));
         } catch (Exception err) {
             instance.getLog().error(err.getMessage());
             err.printStackTrace();

@@ -28,6 +28,8 @@ public class WorldCommand extends ACommand {
         subCommands.put("del", () -> deleteWorld());
         subCommands.put("disable", () -> disableWorld());
         subCommands.put("enable", () -> enableWorld());
+        subCommands.put("protect", () -> enableWorldProtection());
+        subCommands.put("unprotect", () -> disableWorldProtection());
         subCommands.put("players", () -> playersGesture());
     }
 
@@ -40,6 +42,8 @@ public class WorldCommand extends ACommand {
         sender.sendMessage("§e /build worlds del <world> §f- §6Supprimer");
         sender.sendMessage("§e /build worlds disable <world> §f- §6Désactiver");
         sender.sendMessage("§e /build worlds enable <world> §f- §6Activer");
+        sender.sendMessage("§e /build worlds protect <world> §f- §6Proteger (SuperUser)");
+        sender.sendMessage("§e /build worlds unprotect <world> §f- §6Dévérouiller (SuperUser)");
         sender.sendMessage("§e /build worlds players list <world> §f- §6Liste des joueurs");
         sender.sendMessage("§e /build worlds players add <world> <name> §f- §6Ajouter joueur");
         sender.sendMessage("§e /build worlds players del <world> <name> §f- §6Supprimer joueur");
@@ -129,6 +133,33 @@ public class WorldCommand extends ACommand {
     }
 
     private void deleteWorld() {
+        String worldName;
+        Boolean safe;
+        World world;
+
+        if (args.length != 3) {
+            sender.sendMessage("§cUsage: /build worlds del <world>");
+            return;
+        }
+
+        worldName = args[2];
+        if (worldName.equalsIgnoreCase("world")) {
+            sender.sendMessage("§cImpossible de suprimer le monde: ce monde est un hub.");
+            return;
+        }
+
+        world = manager.getWorlds().getOrDefault(worldName, null);
+        if (world == null) {
+            sender.sendMessage("§cAucun monde trouvé pour " + worldName);
+            return;
+        }
+
+        safe = world.isProtected();
+        if (safe && !sender.hasPermission("wardbuilder.worlds.delete.safe")) {
+            sender.sendMessage("§cCe monde est protégé. Seul un SuperUser peut le supprimer.");
+            return;
+        }
+
 
     }
 
@@ -140,14 +171,27 @@ public class WorldCommand extends ACommand {
 
     }
 
+    private void enableWorldProtection() {
+
+    }
+
+    private void disableWorldProtection() {
+
+    }
+
     private void playersGesture() {
-        
+
     }
 
     @Override
     public boolean executeCommand() {
         for (Map.Entry<String, Runnable> entry : subCommands.entrySet()) {
             if (args[1].equalsIgnoreCase(entry.getKey())) {
+                if (!sender.hasPermission("wardbuilder.worlds.command")) {
+                    sender.sendMessage("§cVous n'avez pas la permission d'intéragir avec les mondes.");
+                    return true;
+                }
+
                 entry.getValue().run();
                 return true;
             }

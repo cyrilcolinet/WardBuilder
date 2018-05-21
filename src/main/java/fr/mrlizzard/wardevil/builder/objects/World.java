@@ -2,6 +2,7 @@ package fr.mrlizzard.wardevil.builder.objects;
 
 import com.google.gson.annotations.Expose;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
+import fr.mrlizzard.wardevil.builder.managers.WorldManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,6 +20,7 @@ public class World implements Runnable {
     @Expose private List<String>            signs;
     @Expose private String                  name;
     @Expose private Boolean                 disabled;
+    @Expose private Boolean                 safe;
     @Expose private Map<UUID, String>       specators;
     @Expose private Map<UUID, String>       builders;
 
@@ -30,14 +32,17 @@ public class World implements Runnable {
         this.disabled = false;
         this.specators = new HashMap<>();
         this.builders = new HashMap<>();
+        this.safe = false;
 
-        this.startTask();
+        this.startTask(instance.getWorldManager());
     }
 
-    public void startTask() {
-        if (!instance.getWorldManager().getTasks().containsKey(this)) {
+    public void startTask(WorldManager manager) {
+        if (!manager
+                .getTasks()
+                .containsKey(this)) {
             taskId = instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance, this, 0, 20);
-            instance.getWorldManager().getTasks().put(this, taskId);
+            manager.getTasks().put(this, taskId);
         }
     }
 
@@ -69,7 +74,7 @@ public class World implements Runnable {
                 if (canUpdate) {
                     Sign sign = ((Sign) location.getBlock().getState());
 
-                    sign.setLine(0, "§8-----------");
+                    sign.setLine(0, ((isProtected()) ? "§8--§cSAFE§8--" : "§8-----------"));
                     sign.setLine(1, "§9§l" + name);
                     sign.setLine(2, connected + " / " + 30);
                     sign.setLine(3, "§8-----------");
@@ -83,6 +88,18 @@ public class World implements Runnable {
 
     public Boolean isDisabled() {
         return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean isProtected() {
+        return safe;
+    }
+
+    public void setProtected(Boolean safe) {
+        this.safe = safe;
     }
 
     public String getName() {

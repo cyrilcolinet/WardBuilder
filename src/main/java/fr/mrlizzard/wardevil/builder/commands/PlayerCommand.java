@@ -93,6 +93,11 @@ public class PlayerCommand extends ACommand {
     public boolean executeCommand() {
         for (Map.Entry<String, Runnable> entry : subCommands.entrySet()) {
             if (args[1].equalsIgnoreCase(entry.getKey())) {
+                if (!sender.hasPermission("wardbuilder.players.command")) {
+                    sender.sendMessage("§cVous n'avez pas la permission d'intéragir avec les joueurs.");
+                    return true;
+                }
+
                 entry.getValue().run();
                 return true;
             }
