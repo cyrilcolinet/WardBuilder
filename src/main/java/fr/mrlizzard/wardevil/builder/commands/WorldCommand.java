@@ -67,23 +67,27 @@ public class WorldCommand extends ACommand {
             return;
         }
 
-        sender.sendMessage("§eListe des mondes (1/" + maxPages + "):");
+        sender.sendMessage("§eListe des mondes (" + page + "/" + maxPages + "):");
         for (int loop = 0; loop < maxPages; loop++) {
-            World world = worlds.get(key);
+            World world;
             ChatColor color;
 
-            if (world == null)
+            try {
+                world = worlds.get(key);
+            } catch (IndexOutOfBoundsException err) {
                 break;
+            }
 
             color = ((world.isDisabled()) ? ChatColor.RED : ChatColor.GREEN);
             sender.sendMessage("  §b- " + color + world.getName());
+            key++;
         }
     }
 
     private void addWorld() {
         String worldName;
-        BuildPlayer buildPlayer = null;
-        String strPlayer = null;
+        BuildPlayer buildPlayer;
+        String strPlayer;
 
         if (args.length != 3) {
             sender.sendMessage("§cUsage: /build worlds add <world>");
@@ -105,7 +109,8 @@ public class WorldCommand extends ACommand {
 
         org.bukkit.World world = instance.getServer().getWorld(worldName);
         if (world == null) {
-            instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv create " + worldName + " normal -t flat");
+            sender.sendMessage("§6[WARNING] Temporarly disabled");
+            //instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv create " + worldName + " normal -t flat");
         }
 
         if (sender instanceof Player) {
@@ -116,7 +121,7 @@ public class WorldCommand extends ACommand {
         }
 
         manager.getWorlds().put(worldName, new World(instance, worldName));
-
+        instance.getServer().broadcastMessage("§aNouveau monde créé: §e" + worldName);
     }
 
     @Override

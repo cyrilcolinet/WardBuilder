@@ -8,10 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class World implements Runnable {
 
@@ -30,13 +27,16 @@ public class World implements Runnable {
         this.name = name;
         this.signs = new ArrayList<>();
         this.connected = 0;
+        this.disabled = false;
+        this.specators = new HashMap<>();
+        this.builders = new HashMap<>();
 
         this.startTask();
     }
 
     public void startTask() {
         if (!instance.getWorldManager().getTasks().containsKey(this)) {
-            taskId = instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance, this, 0, 1);
+            taskId = instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance, this, 0, 20);
             instance.getWorldManager().getTasks().put(this, taskId);
         }
     }
@@ -48,7 +48,7 @@ public class World implements Runnable {
                 connected++;
 
         if (connected == 0 && instance.getServer().getWorld(name) != null)
-            instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mvunload " + name);
+            instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv unload " + name);
 
         signs.forEach(strLoc -> {
             Boolean canUpdate = false;

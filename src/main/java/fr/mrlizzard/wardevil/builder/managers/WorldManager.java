@@ -3,6 +3,7 @@ package fr.mrlizzard.wardevil.builder.managers;
 import com.google.gson.reflect.TypeToken;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.objects.World;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -63,12 +64,7 @@ public class WorldManager {
 
     public void killWorldTasks() {
         instance.getLog().info("Killing all world tasks...");
-
-        tasks.values().forEach(task -> {
-            instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {
-                instance.getServer().getScheduler().cancelTask(task);
-            }, 600);
-        });
+        tasks.values().forEach(task -> instance.getServer().getScheduler().cancelTask(task));
     }
 
     public void saveWorldsConfigFile() {
