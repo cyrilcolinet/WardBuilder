@@ -4,7 +4,10 @@ import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.managers.WorldManager;
 import fr.mrlizzard.wardevil.builder.objects.BuildPlayer;
 import fr.mrlizzard.wardevil.builder.objects.World;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -121,21 +124,25 @@ public class WorldCommand extends ACommand {
             //instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv create " + worldName + " normal -t flat");
         }
 
+        manager.getWorlds().put(worldName, new World(instance, worldName));
+
         if (sender instanceof Player) {
             buildPlayer = instance.getManager().getPlayer(((Player) sender).getUniqueId());
             strPlayer = buildPlayer.getRank().getPrefix() + sender.getName() + ChatColor.RESET;
 
             instance.getServer().broadcastMessage("§aNouveau monde créé par " + strPlayer + ": §e" + worldName);
+        } else {
+            instance.getServer().broadcastMessage("§aNouveau monde créé: §e" + worldName);
         }
-
-        manager.getWorlds().put(worldName, new World(instance, worldName));
-        instance.getServer().broadcastMessage("§aNouveau monde créé: §e" + worldName);
     }
 
     private void deleteWorld() {
         String worldName;
         Boolean safe;
         World world;
+        BuildPlayer buildPlayer;
+        String strPlayer;
+        String protectedWorld = "";
 
         if (args.length != 3) {
             sender.sendMessage("§cUsage: /build worlds del <world>");
@@ -160,7 +167,32 @@ public class WorldCommand extends ACommand {
             return;
         }
 
+        world.getSigns().forEach(sign-> {
+            Location loc = null;
+            String[] split = StringUtils.split(sign, ",");
+            org.bukkit.World w = instance.getServer().getWorld(split[0]);
 
+            if (w != null)
+                loc = new Location(w, Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]));
+
+            if (loc != null && loc.getBlock().getType().equals(Material.WALL_SIGN))
+                loc.getBlock().breakNaturally();
+        });
+
+        if (safe)
+            protectedWorld = "§c(protégé)§a ";
+
+        instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv unload " + worldName);
+        manager.getWorlds().remove(worldName);
+
+        if (sender instanceof Player) {
+            buildPlayer = instance.getManager().getPlayer(((Player) sender).getUniqueId());
+            strPlayer = buildPlayer.getRank().getPrefix() + sender.getName() + ChatColor.RESET;
+
+            instance.getServer().broadcastMessage("§aMonde " + protectedWorld + "supprimé par " + strPlayer + ": §e" + worldName);
+        } else {
+            instance.getServer().broadcastMessage("§aMonde " + protectedWorld + "supprimé: §e" + worldName);
+        }
     }
 
     private void disableWorld() {

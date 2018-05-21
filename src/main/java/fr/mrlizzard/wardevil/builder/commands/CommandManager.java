@@ -53,6 +53,6 @@ public class CommandManager implements CommandExecutor {
         }
 
         sender.sendMessage("§cCommande inconnue. Taper /build help pour voir l'aide.");
-        return false;
+        return true;
     }
 }
