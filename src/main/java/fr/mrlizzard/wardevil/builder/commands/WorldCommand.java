@@ -2,8 +2,10 @@ package fr.mrlizzard.wardevil.builder.commands;
 
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.managers.WorldManager;
+import fr.mrlizzard.wardevil.builder.objects.BuildPlayer;
 import fr.mrlizzard.wardevil.builder.objects.World;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ public class WorldCommand extends ACommand {
     @Override
     public void loadSubCommands() {
         subCommands.put("list", () -> listWorlds());
+        subCommands.put("add", () -> addWorld());
     }
 
     @Override
@@ -75,6 +78,45 @@ public class WorldCommand extends ACommand {
             color = ((world.isDisabled()) ? ChatColor.RED : ChatColor.GREEN);
             sender.sendMessage("  §b- " + color + world.getName());
         }
+    }
+
+    private void addWorld() {
+        String worldName;
+        BuildPlayer buildPlayer = null;
+        String strPlayer = null;
+
+        if (args.length != 3) {
+            sender.sendMessage("§cUsage: /build worlds add <world>");
+            return;
+        }
+
+        worldName = args[2];
+        if (worldName.equalsIgnoreCase("world")) {
+            sender.sendMessage("§cImpossible de créer le monde: ce monde est un hub.");
+            return;
+        }
+
+        for (World world : manager.getWorlds().values()) {
+            if (world.getName().equalsIgnoreCase(worldName)) {
+                sender.sendMessage("§cUn monde ayant déjà la même nom a été trouvé: " + world.getName());
+                return;
+            }
+        }
+
+        org.bukkit.World world = instance.getServer().getWorld(worldName);
+        if (world == null) {
+            instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv create " + worldName + " normal -t flat");
+        }
+
+        if (sender instanceof Player) {
+            buildPlayer = instance.getManager().getPlayer(((Player) sender).getUniqueId());
+            strPlayer = buildPlayer.getRank().getPrefix() + sender.getName() + ChatColor.RESET;
+
+            instance.getServer().broadcastMessage("§aNouveau monde créé par " + strPlayer + ": §e" + worldName);
+        }
+
+        manager.getWorlds().put(worldName, new World(instance, worldName));
+
     }
 
     @Override
