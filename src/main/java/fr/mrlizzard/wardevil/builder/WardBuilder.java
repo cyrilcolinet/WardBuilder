@@ -7,6 +7,7 @@ import fr.mrlizzard.wardevil.builder.listeners.ListenersManager;
 import fr.mrlizzard.wardevil.builder.commands.CommandManager;
 import fr.mrlizzard.wardevil.builder.managers.BuildManager;
 import fr.mrlizzard.wardevil.builder.managers.ConfigManager;
+import fr.mrlizzard.wardevil.builder.managers.WorldManager;
 import fr.mrlizzard.wardevil.builder.uitls.Logger;
 import fr.mrlizzard.wardevil.builder.uitls.players.UUIDTranslator;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +22,7 @@ public class WardBuilder extends JavaPlugin {
     private BuildManager            buildManager;
     private RedisLoader             connector;
     private UUIDTranslator          uuidTranslator;
+    private WorldManager            worldManager;
 
     @Override
     public void onLoad() {
@@ -33,6 +35,7 @@ public class WardBuilder extends JavaPlugin {
         buildManager = new BuildManager(this);
         connector = new RedisLoader(this);
         uuidTranslator = new UUIDTranslator(this);
+        worldManager = new WorldManager(this);
     }
 
     @Override
@@ -50,6 +53,7 @@ public class WardBuilder extends JavaPlugin {
 
         getServer().getOnlinePlayers().forEach(player -> player.kickPlayer("§cRedémarrage en cours."));
         connector.destroy();
+        worldManager.killWorldTasks();
     }
 
     public Logger getLog() {
@@ -66,6 +70,10 @@ public class WardBuilder extends JavaPlugin {
 
     public BuildManager getManager() {
         return buildManager;
+    }
+
+    public WorldManager getWorldManager() {
+        return worldManager;
     }
 
     public RedisLoader getConnector() {
