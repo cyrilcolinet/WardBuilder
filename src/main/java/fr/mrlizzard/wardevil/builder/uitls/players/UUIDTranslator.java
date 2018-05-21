@@ -41,8 +41,8 @@ public class UUIDTranslator  {
 
     public void persistInfo(String name, UUID uuid, Jedis jedis) {
         addToMaps(name, uuid);
-        jedis.hset("uuid-cache", name.toLowerCase(), new Gson().toJson(uuidToNameMap.get(uuid)));
-        jedis.hset("uuid-cache", uuid.toString(), new Gson().toJson(uuidToNameMap.get(uuid)));
+        jedis.hset("uuid-cache", name.toLowerCase(), instance.getGson().toJson(uuidToNameMap.get(uuid)));
+        jedis.hset("uuid-cache", uuid.toString(), instance.getGson().toJson(uuidToNameMap.get(uuid)));
     }
 
     public UUID getUUID(String name, boolean allowMojangCheck) {
@@ -77,8 +77,11 @@ public class UUIDTranslator  {
                 if (entry.expired()) {
                     jedis.hdel("uuid-cache", name.toLowerCase());
                 } else {
+                    jedis.close();
                     nameToUuidMap.put(name.toLowerCase(), entry);
-                    uuidToNameMap.put(entry.getUuid(), entry);
+                    uuidToNameMap.put(
+                            entry.getUuid(),
+                            entry);
                     return entry.getUuid();
                 }
             }
@@ -95,6 +98,7 @@ public class UUIDTranslator  {
             for (Map.Entry<String, UUID> entry2 : uuidMap1.entrySet()) {
                 if (entry2.getKey().equalsIgnoreCase(name)) {
                     persistInfo(entry2.getKey(), entry2.getValue(), jedis);
+                    jedis.close();
                     return entry2.getValue();
                 }
             }
@@ -129,6 +133,7 @@ public class UUIDTranslator  {
                 if (entry.expired()) {
                     jedis.hdel("uuid-cache", uuid.toString());
                 } else {
+                    jedis.close();
                     nameToUuidMap.put(entry.getName().toLowerCase(), entry);
                     uuidToNameMap.put(uuid, entry);
                     return entry.getName();
@@ -147,6 +152,7 @@ public class UUIDTranslator  {
 
             if (name != null) {
                 persistInfo(name, uuid, jedis);
+                jedis.close();
                 return name;
             }
 
