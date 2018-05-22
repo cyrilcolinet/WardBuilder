@@ -2,6 +2,7 @@ package fr.mrlizzard.wardevil.builder.managers;
 
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.objects.BuildPlayer;
+import fr.mrlizzard.wardevil.builder.uitls.Rank;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 
@@ -84,6 +85,8 @@ public class BuildManager {
 
         if (player != null) {
             player.sendMessage("§aUne valeur a été changée: " + key + " -> " + value);
+            if (key.equalsIgnoreCase("rank") && !Rank.valueOf(value).isOp())
+                player.setOp(false);
         }
     }
 
