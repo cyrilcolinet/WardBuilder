@@ -1,8 +1,10 @@
 package fr.mrlizzard.wardevil.builder.commands;
 
 import fr.mrlizzard.wardevil.builder.WardBuilder;
+import fr.mrlizzard.wardevil.builder.objects.BuildPlayer;
 import fr.mrlizzard.wardevil.builder.uitls.Rank;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 
 import java.util.Map;
@@ -34,6 +36,7 @@ public class PlayerCommand extends ACommand {
     private void promotePlayer() {
         Rank rank;
         UUID uuid;
+        BuildPlayer current;
 
         if (args.length < 4) {
             sender.sendMessage("§cUsage: /build players promote <player> <rank>");
@@ -47,11 +50,23 @@ public class PlayerCommand extends ACommand {
             return;
         }
 
+        if (sender instanceof Player) {
+            current = instance.getManager().getPlayer(((Player) sender).getUniqueId());
+
+            if (current.getRank().getId() < rank.getId()) {
+                sender.sendMessage("§cVous ne pouvez pas assigner de grade supérieur au votre.");
+                return;
+            }
+        }
+
         uuid = instance.getUuidTranslator().getUUID(args[2], true);
         if (uuid == null) {
             sender.sendMessage("§cAucun joueur nommé " + args[2] + " trouvé.");
             return;
         }
+
+        if (rank.getId() < Rank.SUPER_USER.getId())
+            instance.getManager().getSuperUsers().remove(uuid);
 
         instance.getManager().changePlayerParam(uuid, "rank", rank.toString());
         sender.sendMessage("§a" + args[2] + " a bien été promu " + StringUtils.capitalize(args[3].toLowerCase()));
@@ -87,6 +102,8 @@ public class PlayerCommand extends ACommand {
         values = jedis.hgetAll("players:" + uuid);
         sender.sendMessage("§aVoici les données concernant " + args[2]);
         values.forEach((key, value) -> sender.sendMessage("  §e" + key + " §c-> §b" + value));
+        jedis.close();
+        sender.sendMessage("  §eSuperUser §c-> " + ((instance.getManager().getSuperUsers().contains(uuid)) ? "§aoui" : "§cnon"));
     }
 
     @Override

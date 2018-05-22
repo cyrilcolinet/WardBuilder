@@ -2,8 +2,9 @@ package fr.mrlizzard.wardevil.builder.uitls;
 
 public enum Rank {
 
-    SUPER_USER      (100, true, "§c(GameManager) "),
-    OWNER           (90, false, "§c(Responsable) "),
+    SUPER_USER      (100, true, "§4(Admin) "),
+    OWNER           (90, false, "§c(Resp.) "),
+    BUILDER         (80, false, "§9(Builder) "),
     SPECTATOR       (0, false, "§8(Spectateur) ");
 
     Integer         id;

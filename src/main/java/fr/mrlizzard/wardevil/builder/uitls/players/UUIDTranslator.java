@@ -10,51 +10,51 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-public class UUIDTranslator  {
+/**
+ * Original author : Tux (RedisBungee)
+ * Updated by zyuiop
+ */
+public final class UUIDTranslator  {
+    private final Pattern UUID_PATTERN = Pattern.compile("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
+    private final Pattern MOJANGIAN_UUID_PATTERN = Pattern.compile("[a-fA-F0-9]{32}");
+    private final Map<String, CachedUUIDEntry> nameToUuidMap = new ConcurrentHashMap<>(128, 0.5f, 4);
+    private final Map<UUID, CachedUUIDEntry> uuidToNameMap = new ConcurrentHashMap<>(128, 0.5f, 4);
+    private final WardBuilder plugin;
 
-    private WardBuilder                         instance;
-    private Pattern                             UUID_PATTERN;
-    private Pattern                             MOJANGIAN_UUID_PATTERN ;
-    private Map<String, CachedUUIDEntry>        nameToUuidMap;
-    private Map<UUID, CachedUUIDEntry>          uuidToNameMap;
-
-    public UUIDTranslator(WardBuilder instance) {
-        this.instance = instance;
-        this.UUID_PATTERN = Pattern.compile("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
-        this.MOJANGIAN_UUID_PATTERN = Pattern.compile("[a-fA-F0-9]{32}");
-        this.nameToUuidMap = new ConcurrentHashMap<>(128, 0.5f, 4);
-        this.uuidToNameMap = new ConcurrentHashMap<>(128, 0.5f, 4);
+    public UUIDTranslator(WardBuilder plugin) {
+        this.plugin = plugin;
     }
 
     private void addToMaps(String name, UUID uuid) {
-        Calendar calendar = Calendar.getInstance();
-        CachedUUIDEntry entry;
+        // This is why I like LocalDate...
 
+        // Cache the entry for three days.
+        Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_WEEK, 3);
 
-        entry = new CachedUUIDEntry(name, uuid, calendar);
+        // Create the entry and populate the local maps
+        CachedUUIDEntry entry = new CachedUUIDEntry(name, uuid, calendar);
         nameToUuidMap.put(name.toLowerCase(), entry);
         uuidToNameMap.put(uuid, entry);
     }
 
     public void persistInfo(String name, UUID uuid, Jedis jedis) {
         addToMaps(name, uuid);
-        jedis.hset("uuid-cache", name.toLowerCase(), instance.getGson().toJson(uuidToNameMap.get(uuid)));
-        jedis.hset("uuid-cache", uuid.toString(), instance.getGson().toJson(uuidToNameMap.get(uuid)));
+        jedis.hset("uuid-cache", name.toLowerCase(), new Gson().toJson(uuidToNameMap.get(uuid)));
+        jedis.hset("uuid-cache", uuid.toString(), new Gson().toJson(uuidToNameMap.get(uuid)));
     }
 
     public UUID getUUID(String name, boolean allowMojangCheck) {
-        CachedUUIDEntry cachedUUIDEntry;
-        String stored;
-        CachedUUIDEntry entry;
-        Map<String, UUID> uuidMap1;
+        // If the player is online, give them their UUID.
+        // Remember, local data > remote data.
+        if (plugin.getServer().getPlayer(name) != null)
+            return plugin.getServer().getPlayer(name).getUniqueId();
 
-        if (instance.getServer().getPlayer(name) != null)
-            return instance.getServer().getPlayer(name).getUniqueId();
-
-        cachedUUIDEntry = nameToUuidMap.get(name.toLowerCase());
+        // Check if it exists in the map
+        CachedUUIDEntry cachedUUIDEntry = nameToUuidMap.get(name.toLowerCase());
         if (cachedUUIDEntry != null) {
             if (!cachedUUIDEntry.expired())
                 return cachedUUIDEntry.getUuid();
@@ -62,62 +62,63 @@ public class UUIDTranslator  {
                 nameToUuidMap.remove(name);
         }
 
+        // Check if we can exit early
         if (UUID_PATTERN.matcher(name).find()) {
             return UUID.fromString(name);
         }
 
         if (MOJANGIAN_UUID_PATTERN.matcher(name).find()) {
+            // Reconstruct the UUID
             return UUIDFetcher.getUUID(name);
         }
 
-        try (Jedis jedis = instance.getConnector().getCacheRessource()) {
-            stored = jedis.hget("uuid-cache", name.toLowerCase());
+        // Let's try Redis.
+        try (Jedis jedis = plugin.getConnector().getCacheRessource()) {
+            String stored = jedis.hget("uuid-cache", name.toLowerCase());
             if (stored != null) {
-                entry = instance.getGson().fromJson(stored, CachedUUIDEntry.class);
+                // Found an entry value. Deserialize it.
+                CachedUUIDEntry entry = new Gson().fromJson(stored, CachedUUIDEntry.class);
+
+                // Check for expiry:
                 if (entry.expired()) {
                     jedis.hdel("uuid-cache", name.toLowerCase());
                 } else {
-                    jedis.close();
                     nameToUuidMap.put(name.toLowerCase(), entry);
-                    uuidToNameMap.put(
-                            entry.getUuid(),
-                            entry);
+                    uuidToNameMap.put(entry.getUuid(), entry);
                     return entry.getUuid();
                 }
             }
 
+            // That didn't work. Let's ask Mojang.
             if (!allowMojangCheck)
                 return null;
 
+            Map<String, UUID> uuidMap1;
             try {
                 uuidMap1 = new UUIDFetcher(Collections.singletonList(name)).call();
             } catch (Exception e) {
-                instance.getLog().error("Unable to fetch UUID from Mojang for " + name);
+                plugin.getLogger().log(Level.SEVERE, "Unable to fetch UUID from Mojang for " + name, e);
                 return null;
             }
-            for (Map.Entry<String, UUID> entry2 : uuidMap1.entrySet()) {
-                if (entry2.getKey().equalsIgnoreCase(name)) {
-                    persistInfo(entry2.getKey(), entry2.getValue(), jedis);
-                    jedis.close();
-                    return entry2.getValue();
+            for (Map.Entry<String, UUID> entry : uuidMap1.entrySet()) {
+                if (entry.getKey().equalsIgnoreCase(name)) {
+                    persistInfo(entry.getKey(), entry.getValue(), jedis);
+                    return entry.getValue();
                 }
             }
         } catch (JedisException e) {
-            instance.getLog().error("Unable to fetch UUID for " + name);
+            plugin.getLogger().log(Level.SEVERE, "Unable to fetch UUID for " + name, e);
         }
 
-        return null;
+        return null; // Nope, game over!
     }
 
     public String getName(UUID uuid, boolean allowMojangCheck) {
-        CachedUUIDEntry cachedUUIDEntry;
-        CachedUUIDEntry entry;
-        String name;
+        if (plugin.getServer().getPlayer(uuid) != null)
+            return plugin.getServer().getPlayer(uuid).getName();
 
-        if (instance.getServer().getPlayer(uuid) != null)
-            return instance.getServer().getPlayer(uuid).getName();
-
-        cachedUUIDEntry = uuidToNameMap.get(uuid);
+        // Check if it exists in the map
+        CachedUUIDEntry cachedUUIDEntry = uuidToNameMap.get(uuid);
         if (cachedUUIDEntry != null) {
             if (!cachedUUIDEntry.expired())
                 return cachedUUIDEntry.getName();
@@ -125,15 +126,17 @@ public class UUIDTranslator  {
                 uuidToNameMap.remove(uuid);
         }
 
-        try (Jedis jedis = instance.getConnector().getCacheRessource()) {
+        // Okay, it wasn't locally cached. Let's try Redis.
+        try (Jedis jedis = plugin.getConnector().getCacheRessource()) {
             String stored = jedis.hget("uuid-cache", uuid.toString());
             if (stored != null) {
-                entry = instance.getGson().fromJson(stored, CachedUUIDEntry.class);
+                // Found an entry value. Deserialize it.
+                CachedUUIDEntry entry = new Gson().fromJson(stored, CachedUUIDEntry.class);
 
+                // Check for expiry:
                 if (entry.expired()) {
                     jedis.hdel("uuid-cache", uuid.toString());
                 } else {
-                    jedis.close();
                     nameToUuidMap.put(entry.getName().toLowerCase(), entry);
                     uuidToNameMap.put(uuid, entry);
                     return entry.getName();
@@ -143,31 +146,31 @@ public class UUIDTranslator  {
             if (!allowMojangCheck)
                 return null;
 
+            // That didn't work. Let's ask Mojang. This call may fail, because Mojang is insane.
+            String name;
             try {
                 name = NameFetcher.nameHistoryFromUuid(uuid).get(0);
             } catch (Exception e) {
-                instance.getLog().error("Unable to fetch name from Mojang for " + uuid);
+                plugin.getLogger().log(Level.SEVERE, "Unable to fetch name from Mojang for " + uuid, e);
                 return null;
             }
 
             if (name != null) {
                 persistInfo(name, uuid, jedis);
-                jedis.close();
                 return name;
             }
 
             return null;
         } catch (JedisException e) {
-            instance.getLog().error("Unable to fetch name for " + uuid);
+            plugin.getLogger().log(Level.SEVERE, "Unable to fetch name for " + uuid, e);
             return null;
         }
     }
 
     private static class CachedUUIDEntry {
-
-        private String        name;
-        private UUID          uuid;
-        private Calendar      expiry;
+        private final String name;
+        private final UUID uuid;
+        private final Calendar expiry;
 
         public boolean expired() {
             return Calendar.getInstance().after(expiry);
@@ -190,6 +193,6 @@ public class UUIDTranslator  {
         public Calendar getExpiry() {
             return expiry;
         }
-
     }
 }
+
