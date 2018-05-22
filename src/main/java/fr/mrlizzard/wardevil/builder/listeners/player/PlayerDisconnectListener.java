@@ -28,8 +28,8 @@ public class PlayerDisconnectListener implements Listener {
         }
 
         if (!world.getName().equalsIgnoreCase("world")) {
-            instance.getServer().getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(world.getName()))
-                    .forEach(p -> {
+            instance.getServer().getOnlinePlayers().stream()
+                    .filter(p -> p.getWorld().getName().equalsIgnoreCase(world.getName())).forEach(p -> {
                 p.sendMessage("§e<> " + buildPlayer.getRank().getPrefix() + player.getName() +
                         " §cs'est déconnecté de ce monde. §e<>");
             });

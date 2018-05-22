@@ -4,6 +4,7 @@ import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.objects.config.Config;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 
 public class ServerListener implements Listener {
@@ -20,5 +21,10 @@ public class ServerListener implements Listener {
 
         event.setMotd(config.getServerName() + "\n" + config.getMotd());
         event.setMaxPlayers(event.getNumPlayers() + 1);
+    }
+
+    @EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        event.setCancelled(true);
     }
 }

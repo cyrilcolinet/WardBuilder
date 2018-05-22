@@ -14,6 +14,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -113,5 +114,10 @@ public class PlayerMiscListener implements Listener {
         }
 
         player.teleport(instance.getServer().getWorld(world.getName()).getSpawnLocation());
+    }
+
+    @EventHandler
+    public void onPlayerChangeWorldListener(PlayerTeleportEvent event) {
+
     }
 }
