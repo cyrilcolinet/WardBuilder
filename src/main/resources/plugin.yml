@@ -11,4 +11,3 @@ commands:
     description: Command for WardBuilder plugin.
     usage: "Usage: /build help"
     aliases: [b, wardbuild]
-    permission: wardbuild.execute
