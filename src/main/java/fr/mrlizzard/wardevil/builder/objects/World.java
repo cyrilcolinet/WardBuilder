@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.managers.WorldManager;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -54,8 +55,10 @@ public class World implements Runnable {
             if (player.getWorld().getName().equalsIgnoreCase(name))
                 connected++;
 
-        if (connected == 0 && instance.getServer().getWorld(name) != null)
+        if (connected == 0 && instance.getServer().getWorld(name) != null) {
             instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), "mv unload " + name);
+            instance.getServer().broadcastMessage("§6Activation du mode écomie pour le monde §e" + name);
+        }
 
         signs.forEach(strLoc -> {
             Boolean canUpdate = false;
@@ -76,9 +79,9 @@ public class World implements Runnable {
                 if (canUpdate) {
                     Sign sign = ((Sign) location.getBlock().getState());
 
-                    sign.setLine(0, ((isProtected()) ? "§8--§cSAFE§8--" : "§8-----------"));
-                    sign.setLine(1, "§9§l" + name);
-                    sign.setLine(2, connected + " / " + 30);
+                    sign.setLine(0, ((isProtected()) ? "§8-- §cSAFE §8--" : "§8-----------"));
+                    sign.setLine(1, ((isDisabled()) ? ChatColor.RED : ChatColor.GREEN) + "§l" + name);
+                    sign.setLine(2, "§d" + connected + "/" + 30);
                     sign.setLine(3, "§8-----------");
                     sign.update();
                 }
