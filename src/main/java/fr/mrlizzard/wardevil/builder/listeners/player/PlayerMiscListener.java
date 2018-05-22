@@ -52,7 +52,7 @@ public class PlayerMiscListener implements Listener {
             return;
         }
 
-        if (!event.getClickedBlock().equals(Material.WALL_SIGN))
+        if (!event.getClickedBlock().getType().equals(Material.WALL_SIGN))
             return;
 
         World world = null;
