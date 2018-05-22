@@ -4,6 +4,7 @@ import fr.mrlizzard.wardevil.builder.WardBuilder;
 import fr.mrlizzard.wardevil.builder.listeners.player.*;
 import fr.mrlizzard.wardevil.builder.listeners.server.BlockListener;
 import fr.mrlizzard.wardevil.builder.listeners.server.ServerListener;
+import fr.mrlizzard.wardevil.builder.listeners.server.SignManagerListener;
 import org.bukkit.plugin.PluginManager;
 
 public class ListenersManager {
@@ -26,6 +27,7 @@ public class ListenersManager {
         pluginManager.registerEvents(new PlayerMiscListener(instance), instance);
         pluginManager.registerEvents(new BlockListener(instance), instance);
         pluginManager.registerEvents(new PlayerMoveListener(instance), instance);
+        pluginManager.registerEvents(new SignManagerListener(instance), instance);
     }
 
 }
