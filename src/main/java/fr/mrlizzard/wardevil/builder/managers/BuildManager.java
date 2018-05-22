@@ -6,6 +6,7 @@ import fr.mrlizzard.wardevil.builder.uitls.Rank;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class BuildManager {
@@ -84,9 +85,29 @@ public class BuildManager {
         instance.getLog().info("Info for " + uuid + " changed (" + key + " -> " + value + ").");
 
         if (player != null) {
+            Rank rank;
+            BuildPlayer buildPlayer;
+
             player.sendMessage("§aUne valeur a été changée: " + key + " -> " + value);
-            if (key.equalsIgnoreCase("rank") && !Rank.valueOf(value).isOp())
-                player.setOp(false);
+            if (key.equalsIgnoreCase("rank")) {
+                rank = Rank.valueOf(value);
+                if (!rank.isOp())
+                    player.setOp(false);
+
+                player.setDisplayName(rank.getPrefix() + player.getName());
+                player.setCustomName(rank.getPrefix() + player.getName());
+                player.setPlayerListName(rank.getPrefix() + player.getName());
+            }
+
+            try {
+                Field field = BuildPlayer.class.getField(key);
+                buildPlayer = this.getPlayer(uuid);
+
+                if (key.equalsIgnoreCase("rank"))
+                    field.set(buildPlayer, Rank.valueOf(value));
+            } catch (Exception err) {
+                instance.getLog().error("Unable to set object field : " + err.getMessage());
+            }
         }
     }
 

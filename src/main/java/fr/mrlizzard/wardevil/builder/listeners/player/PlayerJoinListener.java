@@ -51,7 +51,6 @@ public class PlayerJoinListener implements Listener {
         player.setHealth(20.0D);
         player.setWalkSpeed(0.2F);
         player.setFlySpeed(0.2F);
-        player.setGameMode(GameMode.ADVENTURE);
         player.teleport(instance.getServer().getWorld("world").getSpawnLocation());
 
         if (instance.getManager().getSuperUsers().contains(player.getUniqueId())) {
