@@ -25,6 +25,7 @@ public class ListenersManager {
         pluginManager.registerEvents(new AsyncPlayerChatListener(), instance);
         pluginManager.registerEvents(new PlayerMiscListener(instance), instance);
         pluginManager.registerEvents(new BlockListener(instance), instance);
+        pluginManager.registerEvents(new PlayerMoveListener(instance), instance);
     }
 
 }

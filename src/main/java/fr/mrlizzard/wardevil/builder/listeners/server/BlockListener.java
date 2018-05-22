@@ -36,10 +36,8 @@ public class BlockListener implements Listener {
             if (world == null)
                 return;
 
-            if (world.getBuilders().containsKey(player.getUniqueId())) {
+            if (world.getBuilders().containsKey(player.getUniqueId()))
                 event.setCancelled(true);
-                player.sendMessage("§cVous n'avez pas la permission ici.");
-            }
         }
     }
 
@@ -58,10 +56,8 @@ public class BlockListener implements Listener {
             if (world == null)
                 return;
 
-            if (world.getBuilders().containsKey(player.getUniqueId())) {
+            if (world.getBuilders().containsKey(player.getUniqueId()))
                 event.setCancelled(true);
-                player.sendMessage("§cVous n'avez pas la permission ici.");
-            }
         }
     }
 
@@ -80,10 +76,8 @@ public class BlockListener implements Listener {
             if (world == null)
                 return;
 
-            if (world.getBuilders().containsKey(player.getUniqueId())) {
+            if (world.getBuilders().containsKey(player.getUniqueId()))
                 event.setCancelled(true);
-                player.sendMessage("§cVous n'avez pas la permission ici.");
-            }
         }
     }
 
