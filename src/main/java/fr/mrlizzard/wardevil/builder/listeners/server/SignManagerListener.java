@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class SignManagerListener implements Listener {
 
@@ -96,4 +97,5 @@ public class SignManagerListener implements Listener {
             }
         }
     }
+
 }
