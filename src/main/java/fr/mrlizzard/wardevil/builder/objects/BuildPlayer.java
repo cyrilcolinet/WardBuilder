@@ -19,8 +19,8 @@ public class BuildPlayer {
 
     private Player                  player;
 
-    @Expose private UUID            uuid;
-    @Expose private Rank            rank;
+    @Expose public UUID             uuid;
+    @Expose public Rank             rank;
 
     /**
      * Used to create local player from the redis configuration

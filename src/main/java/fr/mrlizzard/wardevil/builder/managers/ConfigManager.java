@@ -117,8 +117,10 @@ public class ConfigManager {
                 File configFile = new File(data, file);
 
                 // Save ressource to new path if file not exists
-                if (!configFile.exists())
+                if (!configFile.exists()) {
                     instance.saveResource(file, false);
+                    instance.getLog().info("New file " + file + " has beean created (loaded for default config).");
+                }
             });
         }
 

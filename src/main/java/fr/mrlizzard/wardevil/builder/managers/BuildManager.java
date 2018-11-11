@@ -78,6 +78,8 @@ public class BuildManager {
 
         uuidStr = ((jedis.hexists(key, "uuid")) ? jedis.hget(key, "uuid") : uuid.toString());
         rankStr = ((jedis.hexists(key, "rank")) ? jedis.hget(key, "rank") : "SPECTATOR");
+
+        // Get build player from UUID and RANK
         return new BuildPlayer(uuidStr, rankStr);
     }
 
@@ -102,46 +104,73 @@ public class BuildManager {
         return players.get(uuid);
     }
 
+    /**
+     * Delete player from local list
+     * @param uuid UUID of player
+     */
     public void deletePlayer(UUID uuid) {
         players.remove(uuid);
     }
 
-    public void changePlayerParam(UUID uuid, String key, String value) {
+    /**
+     * Change player parameter in database and local object
+     * @param uuid UUID of player
+     * @param key Key of new value
+     * @param value Value of the new key
+     * @return Boolean Success or not success
+     */
+    public Boolean changePlayerParam(UUID uuid, String key, String value) {
         Jedis jedis = instance.getConnector().getRessource();
         String redisKey = "players:" + uuid.toString();
+
+        // Check if redis has a valid connector
+        if (jedis == null) {
+            instance.getLog().error("Jedis have not valid connector.");
+            return false;
+        }
+
+        // Set new value in database for this user
+        jedis.hset(redisKey, key, value);
+        jedis.close();
+
+        // Log change in console
+        instance.getLog().info("Info for " + uuid + " changed (" + key + " -> " + value + ").");
         Player player = instance.getServer().getPlayer(uuid);
 
-        jedis.hset(redisKey, key, value);
-        if (!jedis.hexists(redisKey, "uuid"))
-            jedis.hset(redisKey, "uuid", uuid.toString());
-        jedis.close();
-        instance.getLog().info("Info for " + uuid + " changed (" + key + " -> " + value + ").");
-
+        // If player is conncted, send message that inform player of changement
         if (player != null) {
             Rank rank;
             BuildPlayer buildPlayer;
 
-            player.sendMessage("§aUne valeur a été changée: " + key + " -> " + value);
+            player.sendMessage("§aUne valeur a été changée: §b" + key + " §e-> §c" + value);
+
+            // If the rank has changed, immediat change
             if (key.equalsIgnoreCase("rank")) {
                 rank = Rank.valueOf(value);
-                if (!rank.isOp())
-                    player.setOp(false);
 
+                // Set settings for rank
+                player.setOp(rank.isOp());
+
+                // Set names
                 player.setDisplayName(rank.getPrefix() + player.getName());
                 player.setCustomName(rank.getPrefix() + player.getName());
                 player.setPlayerListName(rank.getPrefix() + player.getName());
             }
 
+            // Change field in build player object
             try {
                 Field field = BuildPlayer.class.getField(key);
                 buildPlayer = this.getPlayer(uuid);
 
+                // In cas of rank key changed
                 if (key.equalsIgnoreCase("rank"))
                     field.set(buildPlayer, Rank.valueOf(value));
             } catch (Exception err) {
                 instance.getLog().error("Unable to set object field : " + err.getMessage());
             }
         }
+
+        return true;
     }
 
     public List<UUID> getSuperUsers() {
