@@ -22,8 +22,8 @@ import java.util.UUID;
 
 public class PlayerMiscListener implements Listener {
 
-    private WardBuilder                     instance;
-    private static Map<UUID, Long>          antiFlood = new HashMap<>();
+    private WardBuilder instance;
+    private static Map<UUID, Long> antiFlood = new HashMap<>();
 
     public PlayerMiscListener(WardBuilder instance) {
         this.instance = instance;

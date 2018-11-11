@@ -14,16 +14,22 @@ import java.util.*;
 
 public class World implements Runnable {
 
-    private WardBuilder                     instance;
-    private Integer                         connected;
-    private Integer                         taskId;
+    private WardBuilder instance;
+    private Integer connected;
+    private Integer taskId;
 
-    @Expose private List<String>            signs;
-    @Expose private String                  name;
-    @Expose private Boolean                 disabled;
-    @Expose private Boolean                 safe;
-    @Expose private Map<UUID, String>       specators;
-    @Expose private Map<UUID, String>       builders;
+    @Expose
+    private List<String> signs;
+    @Expose
+    private String name;
+    @Expose
+    private Boolean disabled;
+    @Expose
+    private Boolean safe;
+    @Expose
+    private Map<UUID, String> specators;
+    @Expose
+    private Map<UUID, String> builders;
 
     public World(WardBuilder instance, String name) {
         this.instance = instance;
