@@ -129,6 +129,10 @@ public class BuildManager {
             return false;
         }
 
+        // If UUID is not set on value change, set it has default
+        if (jedis.hexists(redisKey, "uuid"))
+            jedis.hset(redisKey, "uuid", uuid.toString());
+
         // Set new value in database for this user
         jedis.hset(redisKey, key, value);
         jedis.close();

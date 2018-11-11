@@ -81,17 +81,6 @@ public class PlayerJoinListener implements Listener {
             event.setJoinMessage("");
             player.kickPlayer("§cUne erreur est survenue lors du chargement de votre configuration. " +
                     "Veuillez réessayer.");
-        }
-
-        // Security for rank null check
-        if (buildPlayer.getRank() == null) {
-            event.setJoinMessage("§8" + player.getName() + " §6nous a rejoint.");
-
-            // Inform player for configuration error
-            player.sendMessage("§cIl y a un problème avec ta configuration, merci de te reconnecter.");
-            player.setFlySpeed(0);
-            player.setWalkSpeed(0);
-            player.teleport(instance.getServer().getWorld("world").getSpawnLocation());
             return;
         }
 
