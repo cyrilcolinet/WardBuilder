@@ -150,6 +150,7 @@ public class BuildManager {
 
                 // Set settings for rank
                 player.setOp(rank.isOp());
+                player.setGameMode(rank.getGamemode());
 
                 // Set names
                 player.setDisplayName(rank.getPrefix() + player.getName());
