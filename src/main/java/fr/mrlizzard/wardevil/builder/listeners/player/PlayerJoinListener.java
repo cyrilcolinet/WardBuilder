@@ -46,7 +46,10 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         BuildPlayer buildPlayer = instance.getManager().getPlayer(player.getUniqueId());
 
+        // Display join message
         event.setJoinMessage(buildPlayer.getRank().getPrefix() + player.getName() + " §6nous a rejoint.");
+
+        // Set player default configuration and teleportit to spawn location
         player.setMaxHealth(20.0D);
         player.setHealth(20.0D);
         player.setWalkSpeed(0.2F);

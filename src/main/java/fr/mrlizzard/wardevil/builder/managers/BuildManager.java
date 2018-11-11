@@ -9,6 +9,11 @@ import redis.clients.jedis.Jedis;
 import java.lang.reflect.Field;
 import java.util.*;
 
+/**
+ * BuildManager class
+ * @author mrlizzard
+ * @version 1.0.0
+ */
 public class BuildManager {
 
     private WardBuilder                 instance;
@@ -17,28 +22,47 @@ public class BuildManager {
     private List<UUID>                  whitelisted;
     private Map<UUID, BuildPlayer>      players;
 
+    /**
+     * Manage build server and all instanciations (player, etc...)
+     * @param instance WardBuild instance
+     */
     public BuildManager(WardBuilder instance) {
         this.instance = instance;
         this.superUsers = new ArrayList<>();
         this.whitelisted = new ArrayList<>();
         this.players = new HashMap<>();
 
+        // Load server configuration
         this.loadServerConfiguration();
     }
 
+    /**
+     * Load server configuration and create it
+     * if not created
+     */
     private void loadServerConfiguration() {
+        // If one of file is not found
         if (!instance.getConfigManager().loadFiles()) {
-            if (instance.getConfigManager().getMissing() != null)
-                instance.getLog().error("Config's missing (" + instance.getConfigManager().getMissing() + ").");
+            String missingFile = instance.getConfigManager().getMissing();
+
+            // If file missing, print error in console and stop process loading
+            if (missingFile != null)
+                instance.getLog().error("Config's missing (" + missingFile + ").");
             return;
         }
 
-        instance.getConfigManager().getConfig().getSuperUsers().forEach(uuid -> superUsers.add(UUID.fromString(uuid)));
-        instance.getConfigManager().getWhitelistConfig().getWhitelist().forEach(uuid -> {
-            whitelisted.add(UUID.fromString(uuid));
-        });
+        // Load configuration
+        ConfigManager configManager = instance.getConfigManager();
+
+        configManager.getConfig().getSuperUsers().forEach(uuid -> superUsers.add(UUID.fromString(uuid)));
+        configManager.getWhitelistConfig().getWhitelist().forEach(uuid -> whitelisted.add(UUID.fromString(uuid)));
     }
 
+    /**
+     * Load player configuration from redis server
+     * @param uuid UUID of player
+     * @return BuildPlayer Buildplayer object
+     */
     private BuildPlayer loadPlayerConfig(UUID uuid) {
         Jedis jedis = instance.getConnector().getRessource();
         String key = "players:" + uuid.toString();
@@ -46,6 +70,7 @@ public class BuildManager {
         String rankStr;
         BuildPlayer buildPlayer;
 
+        // If player don't exists in database, create it by default
         if (!jedis.exists(key)) {
             buildPlayer = new BuildPlayer(instance, uuid);
             return buildPlayer;
@@ -56,16 +81,24 @@ public class BuildManager {
         return new BuildPlayer(uuidStr, rankStr);
     }
 
+    /**
+     * Get the build player
+     * @param uuid UUID of player
+     * @return Object Player object
+     */
     public BuildPlayer getPlayer(UUID uuid) {
         BuildPlayer buildPlayer;
 
+        // If build player doesn't exists, create it from config
         if (!players.containsKey(uuid)) {
-            buildPlayer = loadPlayerConfig(uuid);
+            buildPlayer = this.loadPlayerConfig(uuid);
 
+            // Add to current logged players list
             players.put(uuid, buildPlayer);
             return buildPlayer;
         }
 
+        // Get the player and return it
         return players.get(uuid);
     }
 
