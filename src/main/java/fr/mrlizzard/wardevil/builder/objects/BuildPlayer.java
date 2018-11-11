@@ -79,6 +79,11 @@ public class BuildPlayer {
      * @return Rank
      */
     public Rank getRank() {
+        // If rank is null, set spectator to default rank
+        if (rank == null)
+            return Rank.SPECTATOR;
+
+        // Otherwise, set default
         return rank;
     }
 
